@@ -618,7 +618,7 @@ function comboCap(){return 20+5*up.combo}
 function comboMul(){return 1+Math.min(combo,comboCap())*.05}
 function distMul(){return 1+Math.min((maxX/50)/500,1+.5*up.dist)}
 function allMul(){return 1+(comboMul()-1)+(distMul()-1)}
-function fallOff(){return 1/(1+bn/(2500*M().bm))}
+function fallOff(){return 1/(1+bn/(2500*M().bm*chaosAsc()))}
 function sumMul(){return 1+.2*up.bval+(rbMul()*ascMul()-1)+(lvMul()-1)+(comboMul()-1)+(distMul()-1)}
 const PKL=[{id:'gold',ab:'gold',d:10,n:'Golden Banana',t:'Bananas worth double',c:'#ffd700',rb:0},{id:'mag',ab:'surge',d:10,n:'Magnet Banana',t:'Strong banana magnet',c:'#5aa8ff',rb:0},{id:'fth',ab:'moon',d:9,n:'Feather Banana',t:'Low gravity',c:'#c8f5a8',rb:0},{id:'glu',ab:'glue',d:12,n:'Sticky Banana',t:'Ropes do not slip',c:'#c77dff',rb:0},{id:'rch',ab:'reach',d:12,n:'Long-Arm Banana',t:'Longer grab reach',c:'#ff7a5a',rb:0},{id:'shd',ab:'shield',d:12,n:'Bubble Banana',t:'Shield against hazards',c:'#4fe0e0',rb:1}];
 function perkGet(b){const q=PKL.find(x=>x.id===b.pk);if(!q)return;ab[q.ab]=Math.max(ab[q.ab]||0,q.d);popAt(b.x,b.y-44,q.n+'! '+q.t+' '+q.d+'s',q.c,true);sfx('reveal',2);buzz(30);for(let i=0;i<24;i++)pts.push({x:b.x,y:b.y,vx:rnd()*300-150,vy:rnd()*-260,l:.8,c:q.c})}
