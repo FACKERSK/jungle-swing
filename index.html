@@ -2341,7 +2341,7 @@ function drawWh(){if(!whFx.length)return;ctx.save();ctx.globalCompositeOperation
   for(let k=0;k<8;k++){const a=t0*9+k*.785,r=R*(1-((t0*2.2+k*.13)%1))*.9;ctx.fillStyle='rgba(255,255,255,.8)';ctx.beginPath();ctx.arc(x+Math.cos(a)*r,y+Math.sin(a)*r*.3,2,0,7);ctx.fill()}});ctx.restore()}
 function wormholeTick(dt){whFx.forEach(q=>q.t+=dt);whFx=whFx.filter(q=>q.t<.6);if(!whOn()||state!=='play'||!p.fly||p.vy>=0)return;const lim=whCeil()-250;if(p.y>=lim)return;
   const vy=-p.vy;for(let i=0;i<30;i++)pts.push({x:p.x,y:p.y,vx:rnd()*500-250,vy:rnd()*500-250,l:.7,c:i%2?'#c77dff':'#25e6ff'});
-  p.y=lim;p.vy=vy;whFx.push({x:p.x,y:lim,t:0});glitchT=.35;shake=Math.max(shake,.3);glitchSnd();popAt(p.x,p.y+60,'🌀 WORMHOLE','#c77dff',true);
+  p.y=lim;p.vy=vy;whFx.push({x:p.x,y:lim,t:0});shake=Math.max(shake,.25);whSnd();popAt(p.x,p.y+60,'🌀 WORMHOLE','#c77dff',true);
   for(let i=0;i<30;i++)pts.push({x:p.x,y:p.y,vx:rnd()*500-250,vy:rnd()*500-250,l:.7,c:i%2?'#c77dff':'#25e6ff'})}
 function today(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function dgReady(){return X.dg!==today()}
@@ -2866,6 +2866,7 @@ function stkHud(){const w=document.getElementById('stkw'),f=document.getElementB
   if(slowT>0&&state==='play')tx=(tx?tx+'<br>':'')+'⏳ SLOWED '+slowT.toFixed(1)+'s';
   w.innerHTML=tx;w.style.display=tx?'block':'none'}
 function chaosTick(dt){if(map!=='chaos'){stk=null;return}stkTick(dt);glitchT=Math.max(0,glitchT-dt);const ri=chIdx(Math.max(0,p.x));if(ri!==chRi){const first=chRi<0;chRi=ri;if(!first){glitchT=1.15;const m=mapAt(p.x);popAt(p.x,p.y-90,'🌀 '+m.ic+' '+m.n,'#ff9bf0',true);glitchSnd();buzz([30,20,60,20,30]);shake=Math.max(shake,.5)}}}
+function whSnd(){tn(260,.28,'sine',.11,0,3);tn(520,.2,'triangle',.06,.04,2)}
 function glitchSnd(){for(let i=0;i<9;i++)tn(180+Math.random()*2200,.05,i%2?'square':'sawtooth',.08,i*.035,Math.random()<.5?.5:2)}
 const RMOT=(()=>{try{return matchMedia('(prefers-reduced-motion:reduce)').matches}catch(e){return false}})();
 function glitchFx(){if(glitchT<=0||state==='menu')return;const k=Math.min(1,glitchT/1.15),W=cv.width,H=cv.height,c=mainCtx;c.save();c.setTransform(1,0,0,1,0,0);
