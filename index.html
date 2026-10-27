@@ -218,6 +218,10 @@ button:not(:disabled):active,.chip:active,summary:active{transform:scale(.93)}
 #bar.burn{box-shadow:0 0 18px #ff3b2a}
 .card.burnc .lbl{color:#ff9d6b;animation:bpl .4s ease-in-out infinite alternate}
 @keyframes bpl{to{opacity:.4}}
+#dangerfx{position:fixed;inset:0;pointer-events:none;z-index:26;opacity:0;background:radial-gradient(ellipse at center,rgba(255,0,0,0) 45%,rgba(255,20,20,.42) 100%)}
+#dangerfx.on{animation:dgf .55s ease-in-out infinite alternate}#dangerfx.mt{animation-duration:.3s}
+@keyframes dgf{from{opacity:.04}to{opacity:.55}}
+@media (prefers-reduced-motion:reduce){#dangerfx.on{animation:none;opacity:.25}}
 #burnwarn{position:fixed;left:50%;top:22%;transform:translateX(-50%);z-index:27;display:none;flex-direction:column;align-items:center;gap:2px;pointer-events:none;text-align:center;color:#fff;text-shadow:0 0 14px #ff3b2a,0 2px 0 #000;animation:bwp .5s ease-in-out infinite alternate}#burnwarn b{font-size:84px;line-height:1;color:#ffd23f}#burnwarn span{font-size:20px;letter-spacing:.06em;background:rgba(120,10,0,.65);padding:2px 12px;border-radius:10px}@keyframes bwp{to{transform:translateX(-50%) scale(1.12)}}
 #burnfx{position:fixed;inset:0;pointer-events:none;z-index:25;opacity:0;background:radial-gradient(ellipse at center,rgba(255,80,20,0) 45%,rgba(255,60,20,.55) 85%,rgba(255,200,60,.8) 100%)}
 .chip{position:relative;overflow:hidden}
@@ -468,7 +472,7 @@ body.mn #perks,body.uiopen #perks{display:none}
 <div id="bst"></div><div id="perks"></div>
 <div id="dbg">🐞 DEBUG MODE</div><pre id="nerd"></pre>
 <div id="rs"><div class="rbx" id="rsb"><h2 id="rsh"></h2><div id="rsm"></div><div class="rsa"><button id="rsno">Cancel</button><button id="rsyes"></button></div></div></div>
-<div id="hpb"><i></i><span></span></div><div id="stkfx"></div><div id="stkw"></div><div id="rch"><b></b><span><i></i></span></div><div id="burnfx"></div><div id="burnwarn"><span>⚠ OVERHEATING</span><b>5</b><span>Use the parachute (key <u id=bwk>4</u> or tap 🪂) or you will burn</span></div><div id="toast"></div>
+<div id="hpb"><i></i><span></span></div><div id="stkfx"></div><div id="stkw"></div><div id="rch"><b></b><span><i></i></span></div><div id="burnfx"></div><div id="dangerfx"></div><div id="burnwarn"><span>🚨 DANGER! OVERHEATING</span><b>5</b><span>Use the parachute (key <u id=bwk>4</u> or tap 🪂) or you become a meteor</span></div><div id="toast"></div>
 <div id="rot">↻ Rotate your phone sideways for the best view</div>
 <div id="tr"><div class="tcard"><div id="tri">🌴</div><h2 id="trn">Jungle</h2><div id="trt"></div><div class="tbar"><i id="trb"></i></div></div></div>
 <div id="cs"><canvas id="csbg"></canvas><div class="cflash" id="cfl"></div><div class="cw" id="cw"><div class="gl"></div><div class="rays"></div><div class="fl"></div><div id="csv"><div id="cst"></div></div><div class="cn"><span class="ch l"></span><span class="ch r"></span><i class="seam"></i></div><div class="rvl" id="rvl"><canvas id="rvc" width="210" height="210"></canvas></div></div><div id="csr"></div><div id="csb"></div></div>
@@ -476,7 +480,7 @@ body.mn #perks,body.uiopen #perks{display:none}
 <script>
 const cv=document.getElementById('c');let ctx=cv.getContext('2d');const mainCtx=ctx;
 const $d=document.getElementById('d'),$bn=document.getElementById('bn'),$bk=document.getElementById('bk'),$h=document.getElementById('h'),$mt=document.getElementById('mt'),$sp=document.getElementById('sp'),$pw=document.getElementById('pw'),$sb=document.getElementById('sb'),$sh=document.getElementById('sh'),$b=document.getElementById('b'),$f=document.getElementById('fill'),$o=document.getElementById('ov'),$m=document.getElementById('msg'),$rbn=document.getElementById('rbn'),$bst=document.getElementById('bst'),$err=document.getElementById('err'),$errm=document.getElementById('errm'),$errx=document.getElementById('errx');
-const $fade=document.getElementById('fade'),$bw=document.getElementById('burnwarn'),$bfx=document.getElementById('burnfx'),$dbg=document.getElementById('dbg'),$cs=document.getElementById('cs'),$csv=document.getElementById('csv'),$cst=document.getElementById('cst'),$csr=document.getElementById('csr'),$csb=document.getElementById('csb'),$mm=document.getElementById('mm'),$mms=document.getElementById('mms'),$mbtn=document.getElementById('mbtn');
+const $fade=document.getElementById('fade'),$bw=document.getElementById('burnwarn'),$dng=document.getElementById('dangerfx'),$bfx=document.getElementById('burnfx'),$dbg=document.getElementById('dbg'),$cs=document.getElementById('cs'),$csv=document.getElementById('csv'),$cst=document.getElementById('cst'),$csr=document.getElementById('csr'),$csb=document.getElementById('csb'),$mm=document.getElementById('mm'),$mms=document.getElementById('mms'),$mbtn=document.getElementById('mbtn');
 const VERSION='5.8';
 (function(){const el=document.getElementById('boot');if(!el)return;
   if(navigator.webdriver&&!window.__boot){el.remove();return}
@@ -575,13 +579,13 @@ function fill(){let l=frontV||vines[vines.length-1];while(l.x<cam+VW+500){const 
     if(rnd()<.06+.01*up.lucky){const pl=PKL.filter(q=>q.rb<=rb),q=pl[Math.floor(rnd()*pl.length)];nan.push({x:(o.x+l.x)/2+rnd()*120-60,y:Math.min(470,140+rnd()*260),got:false,pk:q.id})}frontV=l}}
 function launch(){sfx('launch');p.fly=true;p.x=-425;p.y=343;const mg=act.mega?.5:0;p.vx=480*(1+.18*up.launch+mg);p.vy=-560*(1+.1*up.launch+mg);p.th=0;p.w=0;p.rl=vines[0].L;lock=0;lockV=-1;ai=0;cam=p.x-VW*.35;lt=0;
   for(let i=0;i<30;i++)pts.push({x:p.x,y:p.y,vx:rnd()*380+40,vy:-rnd()*400,l:.8,c:i%2?'#e0e0e0':'#ff9d3d'})}
-function reset(){stk=null;caught=false;slowT=0;rc=null;rcWait=18;airT=0;zSp=1;chSeg=[0];ARM.init=false;chOrd=[];chRi=-1;glitchT=0;cmapOv=null;ab={};abc={};graceT=0;heldX=-1e9;relW=0;chuteT=chuteCd=burnT=0;burnLive=false;vines=[mk(0)];vines[0].y=50;p={th:.5,w:0,rl:vines[0].L,x:0,y:0,vx:0,vy:0,fly:false};ai=0;cam=-300;maxX=0;lock=0;buf=0;nan=[];pts=[];trail=[];fxT=0;bn=0;camY=0;pads=[];haz=[];combo=0;comboT=0;autoG=false;hurt=0;stunT=0;shake=0;backVines();frontV=vines[0];fuelMax=up.glide&&eq('glide')?glideF(up.glide):0;fuel=fuelMax;dashes=up.boost?boostCh(up.boost):0;udash=up.updash?boostCh(up.updash):0;dT=0;uT=0;magT=0;magCd=0;gk=false;gliding=false;saves=up.net+(act.extra?1:0)+(perkOn(15)?1:0);hp=hpMax();whCd=0;whFx=[];warpT=warpCd=blastT=blastCd=0;carry=0;bankRun=bank;lifeRun=life;lifeFRun=lifeF;fill();launch();updPW();snap()}
+function reset(){stk=null;caught=false;slowT=0;rc=null;rcWait=18;airT=0;zSp=1;chSeg=[0];ARM.init=false;chOrd=[];chRi=-1;glitchT=0;cmapOv=null;ab={};abc={};graceT=0;heldX=-1e9;relW=0;chuteT=chuteCd=burnT=0;burnLive=false;meteor=false;vines=[mk(0)];vines[0].y=50;p={th:.5,w:0,rl:vines[0].L,x:0,y:0,vx:0,vy:0,fly:false};ai=0;cam=-300;maxX=0;lock=0;buf=0;nan=[];pts=[];trail=[];fxT=0;bn=0;camY=0;pads=[];haz=[];combo=0;comboT=0;autoG=false;hurt=0;stunT=0;shake=0;backVines();frontV=vines[0];fuelMax=up.glide&&eq('glide')?glideF(up.glide):0;fuel=fuelMax;dashes=up.boost?boostCh(up.boost):0;udash=up.updash?boostCh(up.updash):0;dT=0;uT=0;magT=0;magCd=0;gk=false;gliding=false;saves=up.net+(act.extra?1:0)+(perkOn(15)?1:0);hp=hpMax();whCd=0;whFx=[];warpT=warpCd=blastT=blastCd=0;carry=0;bankRun=bank;lifeRun=life;lifeFRun=lifeF;fill();launch();updPW();snap()}
 function slipRate(){return 40*(1+.8*dangerLvl(maxX))*Math.pow(.88,up.grip)}
 function slipLeft(){return Math.max(0,graceT)+Math.max(0,vines[ai].L+12-p.rl)/slipRate()}
 function place(){const v=vines[ai];p.x=v.x+p.rl*Math.sin(p.th);p.y=v.y+p.rl*Math.cos(p.th)}
 const BASE_REL_VX=25,BASE_REL_VY=-5;
 function release(){const v=vines[ai],c=Math.cos(p.th),s=Math.sin(p.th);p.vx=Math.max(BASE_REL_VX,p.rl*p.w*c*1.15);p.vy=Math.min(BASE_REL_VY,-p.rl*p.w*s*1.15);p.fly=true;lock=.3;lockV=ai;buf=0;sfx('rel')}
-function tryGrab(){
+function tryGrab(){if(meteor)return;
   for(let i=0;i<vines.length;i++){const v=vines[i];if(i===lockV&&lock>0)continue;if(v.x<heldX-20)continue;
     const dx=p.x-v.x,dy=p.y-v.y;
     if(Math.abs(dx)<48+10*up.grip+(perkOn(3)?10:0)+(ab.reach>0?50+10*up.reach:0)&&dy>50&&dy<v.L+30){
@@ -592,7 +596,7 @@ function tryGrab(){
        slipMax=(v.L+12-Math.max(r,90))/slipRate()+1.3;slipMax=Math.max(.5,slipMax)}
       return true}}
   return false}
-var chuteChip=null,lastCd=0;let dgap=0,dchain=0,chuteT=0,chuteCd=0,burnT=0,burnLive=false;const MOMX=8,BURN_BASE=10000,CHUTE_CD=14;function burnAt(){return (up.therm?BURN_BASE*2:BURN_BASE)*(perkOn(20)?1.15:1)}
+var chuteChip=null,lastCd=0;let dgap=0,dchain=0,chuteT=0,chuteCd=0,burnT=0,burnLive=false,meteor=false;const MOMX=8,BURN_BASE=10000,CHUTE_CD=14;function burnAt(){return BURN_BASE*Math.pow(2,up.therm|0)*(perkOn(20)?1.15:1)}
 function eq(id){return slots.indexOf(id)>=0}
 function glideF(l){return 1.2+.5*l}
 function dashPow(l){return 360+30*l}
@@ -614,7 +618,7 @@ function rbStart(n){return Math.round((RBC[Math.min(n,RB_MAX)]||0)*.05/10)*10}
 function rbMul(){return Math.pow(1.14,rb)}
 function ascMul(){return 1+.95*asc}
 function costMul(r=rb){return Math.max(.4,1-.05*r)}
-function cost(w){const l=up[w.id];return Math.max(1,Math.round(w.base*PM*(l+1)*Math.pow(2,l)*Math.pow(1.8,Math.max(0,l-4))*costMul()))}
+function cost(w){const l=up[w.id];if(w.dbl)return Math.max(1,Math.round(w.base*PM*Math.pow(10,l)*costMul()));return Math.max(1,Math.round(w.base*PM*(l+1)*Math.pow(2,l)*Math.pow(1.8,Math.max(0,l-4))*costMul()))}
 function comboCap(){return 20+5*up.combo}
 function comboMul(){return 1+Math.min(combo,comboCap())*.05}
 function distMul(){return 1+Math.min((maxX/50)/500,1+.5*up.dist)}
@@ -931,7 +935,7 @@ const PW=[
 {id:'interest',rb:1,n:'Banana Interest',k:'',pass:true,ic:'💰',base:50,how:'Earn interest on your bank after every run.',d:l=>(l*2)+'% of your bank, max '+(l*25)},
 {id:'combo',n:'Combo Master',k:'',pass:true,ic:'🔥',base:45,how:'Grab bananas in a row to build a combo multiplier. This lengthens the combo window and raises the cap.',d:l=>(2+.3*l).toFixed(1)+'s window, max x'+(1+(20+5*l)*.05).toFixed(2)},
 {id:'wormhole',rb:4,mx:1,n:'Wormhole',k:'',pass:true,ic:'🌀',base:1000000,how:'Fly 5 m above the big bananas and a wormhole swallows you and spits you back down with the same speed you went up with. Your forward speed is kept. No cooldown. Toggle it in Progress > Level.',d:l=>'bounces you down at 5 m above the big bananas'},
-{id:'therm',rb:5,mx:1,n:'Thermal Plating',k:'',pass:true,ic:'🧯',base:1040000,how:'Heat-proof plating. Doubles the speed where you start to burn.',d:l=>'burn above 20,000 speed (instead of 10,000)'},
+{id:'therm',rb:5,dbl:1,n:'Thermal Plating',k:'',pass:true,ic:'🧯',base:1040000,how:'Heat-proof plating. Every level doubles the speed where you start to burn. Each level costs 10 times the last.',d:l=>'burn above '+(10000*Math.pow(2,l)).toLocaleString('en-US')+' speed'},
 {id:'dist',n:'Long Haul',k:'',pass:true,ic:'🧭',base:50,how:'Bananas are worth more the farther you travel in one run, and keep growing with no limit: +0.01x per 100 m for every level (+0.05x at max). Upgrades raise the cap too.',d:l=>'max x'+(2+.5*l).toFixed(1)+' at '+((500*(1+.5*l))|0)+' m'},
 ];
 function save(){localAt=Date.now();try{localStorage.setItem(SAVE_KEY,JSON.stringify({d:snapshot(),s:sig(),at:localAt}))}catch(e){}scheduleCloud()}
@@ -2596,16 +2600,17 @@ function fxStep(dt){const k=SKN(),f=FX[k.fx];
 function step(dt){dgap=Math.max(0,dgap-dt);dchain=Math.max(0,dchain-dt);
   guard();
   t+=dt;lock-=dt;buf-=dt;
-  if(state!=='play'){overT+=dt;if(state==='over'){shake=Math.max(0,shake-dt*.3);$fade.style.opacity=Math.min(.92,Math.max(0,overT-.5)/5)}else $fade.style.opacity=0;if(lastCd){lastCd=0;$bw.style.display='none'}$bfx.style.opacity=0;return}
+  if(state!=='play'){overT+=dt;if(state==='over'){shake=Math.max(0,shake-dt*.3);$fade.style.opacity=Math.min(.92,Math.max(0,overT-.5)/5)}else $fade.style.opacity=0;if(lastCd){lastCd=0;$bw.style.display='none'}$bfx.style.opacity=0;$dng.classList.remove('on','mt');return}
   if(chk())return;
   chuteCd=Math.max(0,chuteCd-dt);
   if(chuteT>0){chuteT-=dt;if(p.fly){const k=Math.exp(-14*dt);p.vx*=k;p.vy*=k;if(p.vy>230)p.vy=230;snap()}else chuteT=0}
-  {const sp8=p.fly?Math.abs(p.vx)*MOMX:0;burnLive=sp8>burnAt()&&!(ab.shield>0);
+  {if(meteor){if(!p.fly)meteor=false;else{p.vy=Math.min(2600,Math.max(p.vy,1000)+2400*dt);snap();shake=Math.max(shake,.22);for(let i=0;i<4;i++)pts.push({x:p.x+rnd()*30-15,y:p.y+rnd()*30-15,vx:-p.vx*.15-rnd()*120,vy:-p.vy*.12-rnd()*100,l:.6,c:rnd()<.5?'#ff6b1a':'#ffd23f',r:6})}}
+    const sp8=p.fly?Math.abs(p.vx)*MOMX:0;burnLive=!meteor&&sp8>burnAt()&&!(ab.shield>0);
     if(burnLive){burnT+=dt;for(let i=0;i<2;i++)pts.push({x:p.x+rnd()*24-12,y:p.y+rnd()*24-12,vx:-p.vx*.1-rnd()*80,vy:-rnd()*140,l:.55,c:rnd()<.5?'#ff6b1a':'#ffd23f',r:5});
-      if(burnT>=5){burnT=0;burnLive=false;inc('hits');buzz([60,40,120]);hurt=1.4;stunT=.55;shake=.6;combo=0;comboT=0;fuel=0;autoG=false;p.vx*=.55;p.vy*=.55;snap();popAt(p.x,p.y-40,'BURNED!','#ff6b3d',1);sfx('over');
+      if(burnT>=5){burnT=0;burnLive=false;meteor=true;buzz([60,40,120,40,200]);shake=.6;combo=0;comboT=0;fuel=0;autoG=false;chuteT=0;p.vy=Math.max(p.vy,900);snap();popAt(p.x,p.y-40,'☄ METEOR!','#ff6b3d',1);sfx('over');
         for(let i=0;i<26;i++)pts.push({x:p.x,y:p.y,vx:rnd()*380-190,vy:rnd()*380-190,l:.6,c:i%2?'#ff5a4a':'#ffd23f'})}}
     else burnT=Math.max(0,burnT-dt*.7);
-    $bfx.style.opacity=Math.min(1,burnT/3)*(.75+.25*Math.sin(t*20));const cd=burnLive?Math.ceil(5-burnT):0;if(cd!==lastCd){if(cd>0)sfx('warn');lastCd=cd;$bw.style.display=cd>0?'flex':'none';if(cd>0)$bw.querySelector('b').textContent=cd}}
+    $bfx.style.opacity=meteor?1:Math.min(1,burnT/3)*(.75+.25*Math.sin(t*20));$dng.classList.toggle('on',burnLive||meteor);$dng.classList.toggle('mt',meteor);const cd=burnLive?Math.ceil(5-burnT):0;if(cd!==lastCd){if(cd>0)sfx('warn');lastCd=cd;$bw.style.display=cd>0?'flex':'none';if(cd>0)$bw.querySelector('b').textContent=cd}}
   lt+=dt;hurt=Math.max(0,hurt-dt);stunT=Math.max(0,stunT-dt);shake=Math.max(0,shake-dt*2);
   if(!p.fly&&!hold){relW=0;release()}
   if(!p.fly){gliding=false;autoG=false}
@@ -2626,10 +2631,10 @@ function step(dt){dgap=Math.max(0,dgap-dt);dchain=Math.max(0,dchain-dt);
     abStep(dt);
     p.x+=p.vx*dt;p.y+=p.vy*dt;
     if(hold&&stunT<=0)tryGrab();
-    if(p.y>WATER-4&&p.vy>0){const pd=pads.find(q=>Math.abs(p.x-q.x)<q.w/2+8);
+    if(p.y>WATER-4&&p.vy>0&&!meteor){const pd=pads.find(q=>Math.abs(p.x-q.x)<q.w/2+8);
       if(pd){inc('pads');pd.sq=1;sfx('bounce');p.y=WATER-6;p.vy=-Math.max(800,p.vy*.9);p.vx=Math.max(p.vx,320);autoG=false;fuel=fuelMax;for(let i=0;i<18;i++)pts.push({x:p.x,y:WATER,vx:rnd()*260-130,vy:-rnd()*280,l:.6,c:i%2?'#9be3f5':'#7fd96a'})}}
-    if(p.y>WATER){
-      if(wfOn()&&hp>0&&!caught&&waterHp()){}
+    if(p.y>WATER){const wasM=meteor;meteor=false;
+      if(wfOn()&&hp>0&&!caught&&waterHp()){if(wasM)hpHit(Math.ceil(hpMax()*.5))}
       else if(saves>0){saves--;p.y=WATER-2;p.vy=-820;p.vx=Math.max(p.vx,300);for(let i=0;i<24;i++)pts.push({x:p.x,y:WATER,vx:rnd()*300-150,vy:-rnd()*300,l:.6,c:'#9be3f5'});updBST()}
       else{state='over';sfx('over');lbMap=map;if(DBR){rebuildBoard();subBoard()}musicDistant();buzz([70,45,150,45,280]);overT=0;shake=1.3;warpT=blastT=0;const pz=wfOn()&&map!=='chaos',m=pz?0:(maxX/50|0)+bn*5;if(m>best&&!debug)best=m;if(!debug&&m>(bm[map]||0))bm[map]=m;if(!debug){dayTick();if(m>(dayb.by[map]||0)){dayb.by[map]=m;saveDay()}}inc('runs');if(!debug&&!pz)st.distTot=(st.distTot||0)+(maxX/50|0);if(!debug&&!pz)st.bestBn=Math.max(st.bestBn||0,bn);if(!debug&&!pz){st.bestDist=Math.max(st.bestDist,maxX/50|0);qEnsure();const dm=maxX/50|0;chal.dq.mx=Math.max(chal.dq.mx||0,dm);chal.wq.mx=Math.max(chal.wq.mx||0,dm)}
         if(!debug&&!pz){const dd=maxX/50|0;let got=0,pay=0;while((ms[map]||0)<3&&dd>=MTH[ms[map]||0]){const s=(ms[map]||0)+1;ms[map]=s;got=s;pay+=Math.round(150*M().bm*s*(1+.5*rb))}
@@ -3032,7 +3037,8 @@ function armUpd(x,y){const tg=armTarget(),sx=x,sy=y-2;let ta=-1.25,tl=26;
   if(tg){ta=Math.atan2(tg.y-sy,tg.x-sx);tl=tg.hold?34:Math.max(22,Math.min(32,(tg.d||60)*.45))}
   const dt=Math.min(.06,Math.max(0,t-ARM.t0));ARM.t0=t;if(!ARM.init){ARM.a=ta;ARM.l=tl;ARM.init=true;return}
   let d=ta-ARM.a;d=Math.atan2(Math.sin(d),Math.cos(d));const k=1-Math.exp(-dt*11);ARM.a+=d*k;ARM.l+=(tl-ARM.l)*k}
-function monkey(x,y){const k=SKN(),lean=p.fly?Math.atan2(p.vy,p.vx)*.3:-p.th*.5;slipBar(x,y);
+function drawMeteor(x,y){const a=Math.atan2(p.vy,p.vx);ctx.save();ctx.globalCompositeOperation='lighter';ctx.translate(x,y);for(let i=0;i<5;i++){const L=80+i*28+14*Math.sin(t*30+i*2),w=24-i*3.5;ctx.save();ctx.rotate(a+Math.PI);const g=ctx.createLinearGradient(0,0,L,0);g.addColorStop(0,'rgba(255,210,70,.7)');g.addColorStop(.5,'rgba(255,90,20,.42)');g.addColorStop(1,'rgba(255,40,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(0,-w);ctx.quadraticCurveTo(L*.6,-w*.7+Math.sin(t*25+i)*5,L,0);ctx.quadraticCurveTo(L*.6,w*.7+Math.cos(t*25+i)*5,0,w);ctx.fill();ctx.restore()}const R=38+3*Math.sin(t*40),g=ctx.createRadialGradient(0,0,4,0,0,R);g.addColorStop(0,'rgba(255,240,180,.9)');g.addColorStop(.5,'rgba(255,140,40,.55)');g.addColorStop(1,'rgba(255,60,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.fill();ctx.restore()}
+function monkey(x,y){const k=SKN(),lean=p.fly?Math.atan2(p.vy,p.vx)*.3:-p.th*.5;slipBar(x,y);if(meteor)drawMeteor(x,y);
   if(k.fx==='ghost')trail.forEach((q,i)=>drawMonkey(q.x-cam,q.y,lean,k,.05+.28*i/trail.length));
   armUpd(x,y);ARM.on=true;drawMonkey(x,y,lean,k,(k.fx==='ghost'?.62+.2*Math.sin(t*5):1)*(hurt>0&&((t*20|0)%2)?.35:1));ARM.on=false;drawPet(x,y)}
 let PV=false;const RARC={common:'#9aa8b4',rare:'#4aa3ff',epic:'#b36bff',legendary:'#ffb020',spectral:'#6ff6ff',trans:'#ff5ad8'};
