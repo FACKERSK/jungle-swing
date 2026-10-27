@@ -1468,7 +1468,7 @@ function musicStart(kind){kind=kind||'menu';
       const dl=AC.createDelay(1),fb=AC.createGain(),dlp=AC.createBiquadFilter();WET=AC.createGain();WET.gain.value=0;dl.delayTime.value=.34;fb.gain.value=.55;dlp.type='lowpass';dlp.frequency.value=1500;
       LP.connect(dl);dl.connect(dlp);dlp.connect(fb);fb.connect(dl);dlp.connect(WET);WET.connect(cp);
       NB=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
-    try{const n0=AC.currentTime;MG.gain.cancelScheduledValues(n0);MG.gain.setValueAtTime(.6,n0);LP.frequency.cancelScheduledValues(n0);LP.frequency.setValueAtTime(20000,n0);WET.gain.cancelScheduledValues(n0);WET.gain.setValueAtTime(0,n0)}catch(e){}
+    try{const n0=AC.currentTime;MG.gain.cancelScheduledValues(n0);MG.gain.setValueAtTime(.6*VOL.m,n0);LP.frequency.cancelScheduledValues(n0);LP.frequency.setValueAtTime(20000,n0);WET.gain.cancelScheduledValues(n0);WET.gain.setValueAtTime(0,n0)}catch(e){}
     AC.resume();try{const c0=AC;c0.onstatechange=()=>{if(AC&&c0===AC&&c0.state!=='running')setTimeout(audioWake,300)}}catch(e){}
     BUS=AC.createGain();BUS.gain.setValueAtTime(0.0001,AC.currentTime);BUS.gain.linearRampToValueAtTime(1,AC.currentTime+.8);BUS.connect(MG);
     const n=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain(),l=AC.createOscillator(),lg=AC.createGain();
@@ -1479,7 +1479,7 @@ function musicStart(kind){kind=kind||'menu';
   }catch(e){mRun=false}}
 function musicDistant(){
   if(!mRun||!AC||!LP){musicStop();return}
-  try{const n=AC.currentTime;LP.frequency.cancelScheduledValues(n);LP.frequency.setTargetAtTime(520,n,.3);WET.gain.cancelScheduledValues(n);WET.gain.setTargetAtTime(.75,n,.25);MG.gain.cancelScheduledValues(n);MG.gain.setTargetAtTime(.38,n,.4)}catch(e){}}
+  try{const n=AC.currentTime;LP.frequency.cancelScheduledValues(n);LP.frequency.setTargetAtTime(520,n,.3);WET.gain.cancelScheduledValues(n);WET.gain.setTargetAtTime(.75,n,.25);MG.gain.cancelScheduledValues(n);MG.gain.setTargetAtTime(.38*VOL.m,n,.4)}catch(e){}}
 function musicStop(){
   if(!mRun)return;mRun=false;clearInterval(mTimer);windG=null;windF=null;
   const b=BUS,a=amb;amb=[];
@@ -1626,7 +1626,7 @@ function startBind(id){listen=id;renderSettings()}
 function finishBind(code){const id=listen;listen=null;if(code!=='Escape'&&code!=='Minus'&&code!=='NumpadSubtract'){const old=KEYS[id];for(const a of ACTS){if(a[0]!==id&&KEYS[a[0]]===code)KEYS[a[0]]=old}KEYS[id]=code;saveKeys();updKeyLabels()}renderSettings()}
 function resetKeys(){ACTS.forEach(a=>KEYS[a[0]]=a[2]);listen=null;saveKeys();updKeyLabels();renderSettings()}
 document.addEventListener('input',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.vol)return;const k=t.dataset.vol,v=Math.max(0,Math.min(1,(+t.value||0)/100));VOL[k]=v;try{localStorage.setItem(VOL_KEY,JSON.stringify(VOL))}catch(_){}
-  try{if(k==='m'&&MG)MG.gain.value=.6*v;if(k==='s'&&SG)SG.gain.value=.55*v}catch(_){}});
+  try{if(k==='m'&&MG){const n=AC.currentTime;MG.gain.cancelScheduledValues(n);MG.gain.setValueAtTime(.6*v,n)}if(k==='s'&&SG)SG.gain.value=.55*v}catch(_){}});
 document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.vol==='s')sfx('click')});
 function toggleSound(){mOn=!mOn;try{localStorage.setItem(MUS_KEY,mOn?'1':'0')}catch(e){}if(mOn)musicStart();else musicStop();mlabel();renderSettings()}
 let rsStep=0;
@@ -2431,7 +2431,7 @@ function silh(s){if(s.pet)return petSvg(s,52,'filter:brightness(0) drop-shadow(0
   const arms=v===1?'<path d="M21 38q-12-4-13-17" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/><path d="M43 38q12-4 13-17" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/>':'<path d="M21 38q-9 8-8 18" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/><path d="M43 38q9 8 8 18" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/>';
   const hat=v===2?'<path d="M20 15q12-16 24 0z"'+st+'/>':'';
   return '<svg viewBox="0 0 64 64" width="52" height="52"><path d="M44 56q16 2 14-16q-1-8-8-8" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/>'+arms+'<g'+st+'><ellipse cx="32" cy="46" rx="12" ry="14"/><circle cx="16" cy="24" r="6.5"/><circle cx="48" cy="24" r="6.5"/><circle cx="32" cy="24" r="14"/>'+hat+'</g></svg>'}
-function caseDuck(l){try{if(mRun&&AC&&MG&&LP){const n=AC.currentTime;MG.gain.cancelScheduledValues(n);MG.gain.setTargetAtTime(.6*l,n,.25);LP.frequency.cancelScheduledValues(n);LP.frequency.setTargetAtTime(l<1?650:20000,n,.3)}}catch(e){}}
+function caseDuck(l){try{if(mRun&&AC&&MG&&LP){const n=AC.currentTime;MG.gain.cancelScheduledValues(n);MG.gain.setTargetAtTime(.6*VOL.m*l,n,.25);LP.frequency.cancelScheduledValues(n);LP.frequency.setTargetAtTime(l<1?650:20000,n,.3)}}catch(e){}}
 function caseSusp(){caseDuck(.28);
   [0,850,1650,2350,2950].forEach((ms,k)=>later(()=>{tn(55*(1+k*.08),1.3,'sawtooth',.045+k*.018,0,1.02);tn(110*(1+k*.08),1.2,'triangle',.03+k*.01,0,1.04)},ms));
   [450,1150,1750,2250,2650,2980,3220].forEach((ms,k)=>later(()=>{const v=.3+k*.03;tn(62,.17,'sine',v,0,.55);later(()=>tn(52,.15,'sine',v*.8,0,.55),130)},ms));
