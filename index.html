@@ -1110,16 +1110,14 @@ function renderInv(keep){const had=!!$sh.querySelector('.panel')&&$sh.style.disp
   if(had){const pn=$sh.querySelector('.panel');if(pn)pn.classList.add('nop')}const nl=$sh.querySelector('.ivlist');if(nl)nl.scrollTop=ost;if(tab==='sk')pvStart();if(tab==='cn')drawCannonPreviews();if(tab==='bg')drawBgThumbs();chvStart()}
 function renderShop(keep){if(shopMode==='inv'){renderInv(keep);return}const o=$sh.querySelector('.panel'),had=!!o&&$sh.style.display!=='none',st=keep&&o?o.scrollTop:0;
   if(tab==='dbg'&&!debug)tab=shopMode==='play'?'up':'cs';
-  const tabs=shopMode==='rbm'?[['rb',spi('rebirth')+' Rebirth']]:shopMode==='play'?[['up','⬆ Upgrades']]:runShop?[['cs','📦 Crates']]:[['cs','📦 Crates']].concat(debug?[['dbg','🐞 Debug']]:[]);if(!tabs.some(x=>x[0]===tab))tab=tabs[0][0];
+  const tabs=shopMode==='rbm'?[['rb',spi('rebirth')+' Rebirth']]:shopMode==='play'?[['up','⬆ Upgrades']]:[['cs','📦 Crates']].concat(debug?[['dbg','🐞 Debug']]:[]);if(!tabs.some(x=>x[0]===tab))tab=tabs[0][0];
   let h='<div class="panel"><h2>'+(shopMode==='play'?'Upgrades':shopMode==='rbm'?spi('rebirth')+' Rebirth':spi('stall')+' Shop')+(debug?' 🐞':'')+'</h2>'+wal()+(shopMode==='play'?'':'<div class="tabs">'+tabs.map(x=>'<button data-tab="'+x[0]+'"'+(tab===x[0]?' class="on"':'')+'>'+x[1]+'</button>').join('')+'</div>');
   h+=(tab==='up'?PW.map(upRow).join('')+(shopMode==='play'?'<div class="it" style="border:0"><b>🧪 Boosters</b></div>'+boNote()+BO.map(boRow).join('')+'<div class="it" style="border:0"><b>📦 Crates</b></div>'+CASES.map(caseRow).join(''):''):tab==='cs'?CASES.map(caseRow).join(''):tab==='dbg'?dbgRow():rbRow());
   $sh.innerHTML=h+'<button id="shx">Close [B]</button></div>';const n=$sh.querySelector('.panel');if(n){n.scrollTop=st;if(had)n.classList.add('nop')}}
 setInterval(()=>{if(shopOpen&&shopMode==='play'&&$sh.style.display!=='none'&&$cs.style.display!=='flex')renderShop(1)},20000);
 function openPlayShop(t){if(state!=='over')return;shopMode='play';tab=t||'up';shopOpen=true;$sh.innerHTML='';$sh.style.display='flex';$pz.style.display='none';renderShop()}
 function openOverShop(t){if(state!=='over'||shopOpen)return;shopMode='play';tab=t||'up';shopOpen=true;$sh.innerHTML='';$sh.style.display='flex';renderShop()}
-let runShop=false;
-function openRunShop(k){return;if(!paused||state!=='play')return;runShop=true;shopMode=k==='inv'?'inv':'garage';tab=k==='inv'?(['sk','cn','pt','bg'].indexOf(tab)<0?'sk':tab):'cs';shopOpen=true;$sh.innerHTML='';$sh.style.display='flex';$pz.style.display='none';renderShop()}
-function closePlayShop(){eqPick=null;runShop=false;shopMode='garage';shopOpen=false;$sh.style.display='none';if(paused){$pz.style.display='flex';renderPause()}}
+function closePlayShop(){eqPick=null;shopMode='garage';shopOpen=false;$sh.style.display='none';if(paused){$pz.style.display='flex';renderPause()}}
 function toggleShop(v){if(state==='play'||state==='cheat')return;shopOpen=v===undefined?!shopOpen:v;$sh.style.display=shopOpen?'flex':'none';$mm.style.visibility=shopOpen?'hidden':'';$o.style.visibility=shopOpen?'hidden':'';if(shopOpen){$sh.innerHTML='';renderShop()}else if(state==='menu')renderMM()}
 // ---------- main menu ----------
 function logoSvg0(){return '<svg viewBox="0 0 420 160" role="img" aria-label="Jungle Swing"><defs><linearGradient id="lgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6b0"/><stop offset=".55" stop-color="#ffd23f"/><stop offset="1" stop-color="#f09a10"/></linearGradient><linearGradient id="lgV" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7be06a"/><stop offset="1" stop-color="#2fae5a"/></linearGradient></defs>'+
@@ -2472,7 +2470,7 @@ $csb.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||case
   else closeCase()});
 // ---------- shop clicks ----------
 $sh.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
-  if(b.id==='shx'){if(shopMode==='play'||runShop||(shopMode==='rbm'&&state==='over'))closePlayShop();else toggleShop(false);return}
+  if(b.id==='shx'){if(shopMode==='play'||(shopMode==='rbm'&&state==='over'))closePlayShop();else toggleShop(false);return}
   if(b.dataset.tab==='cos'||b.dataset.tab==='ho'){const sc=b.dataset.tab==='cos'?'cos':'house';toggleShop(false);mmScreen=sc;renderMM();return}
   if(b.dataset.tab){tab=b.dataset.tab;renderShop();return}
   if(b.id==='rbgo'){doRebirth();return}
@@ -2579,8 +2577,7 @@ const NK={Digit1:1,Digit2:2,Digit3:3,Digit4:4,Digit5:5,Digit6:6,Numpad1:1,Numpad
 addEventListener('keydown',e=>{
   if(listen){e.preventDefault();finishBind(e.code);return}
   if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'))return;
-  if(runShop&&shopOpen&&$cs.style.display==='flex'){e.preventDefault();if(e.code==='Escape'&&!caseBusy)closeCase();return}
-  if(shopOpen&&(shopMode==='play'||runShop)){if(e.code==='Escape'||e.code==='KeyB'||e.code==='KeyP'){e.preventDefault();closePlayShop()}return}
+  if(shopOpen&&(shopMode==='play')){if(e.code==='Escape'||e.code==='KeyB'||e.code==='KeyP'){e.preventDefault();closePlayShop()}return}
   if(paused){if(e.code==='Escape'||e.code==='KeyP'){e.preventDefault();setPause(false)}return}
   if((e.code==='Escape'||e.code==='KeyP')&&state==='play'&&!e.repeat){e.preventDefault();setPause(true);return}
   let cmdIn=false;
