@@ -618,7 +618,7 @@ function comboCap(){return 20+5*up.combo}
 function comboMul(){return 1+Math.min(combo,comboCap())*.05}
 function distMul(){return 1+Math.min((maxX/50)/500,1+.5*up.dist)}
 function allMul(){return 1+(comboMul()-1)+(distMul()-1)}
-function fallOff(){return 1/(1+bn/(2500*M().bm*chaosAsc()))}
+function fallOff(){return Math.pow(1.005+.001*up.dist,Math.max(0,maxX/50)/100)}
 function sumMul(){return 1+.2*up.bval+(rbMul()*ascMul()-1)+(lvMul()-1)+(comboMul()-1)+(distMul()-1)}
 const PKL=[{id:'gold',ab:'gold',d:10,n:'Golden Banana',t:'Bananas worth double',c:'#ffd700',rb:0},{id:'mag',ab:'surge',d:10,n:'Magnet Banana',t:'Strong banana magnet',c:'#5aa8ff',rb:0},{id:'fth',ab:'moon',d:9,n:'Feather Banana',t:'Low gravity',c:'#c8f5a8',rb:0},{id:'glu',ab:'glue',d:12,n:'Sticky Banana',t:'Ropes do not slip',c:'#c77dff',rb:0},{id:'rch',ab:'reach',d:12,n:'Long-Arm Banana',t:'Longer grab reach',c:'#ff7a5a',rb:0},{id:'shd',ab:'shield',d:12,n:'Bubble Banana',t:'Shield against hazards',c:'#4fe0e0',rb:1}];
 function perkGet(b){const q=PKL.find(x=>x.id===b.pk);if(!q)return;ab[q.ab]=Math.max(ab[q.ab]||0,q.d);popAt(b.x,b.y-44,q.n+'! '+q.t+' '+q.d+'s',q.c,true);sfx('reveal',2);buzz(30);for(let i=0;i<24;i++)pts.push({x:b.x,y:b.y,vx:rnd()*300-150,vy:rnd()*-260,l:.8,c:q.c})}
@@ -931,7 +931,7 @@ const PW=[
 {id:'combo',n:'Combo Master',k:'',pass:true,ic:'🔥',base:45,how:'Grab bananas in a row to build a combo multiplier. This lengthens the combo window and raises the cap.',d:l=>(2+.3*l).toFixed(1)+'s window, max x'+(1+(20+5*l)*.05).toFixed(2)},
 {id:'wormhole',rb:4,mx:1,n:'Wormhole',k:'',pass:true,ic:'🌀',base:1000000,how:'When you fly far too high (150 m above the water) a wormhole teleports you ahead to a vine. 25 s cooldown. Toggle it in Progress > Level.',d:l=>'teleports you at 150 m height'},
 {id:'therm',rb:5,mx:1,n:'Thermal Plating',k:'',pass:true,ic:'🧯',base:1040000,how:'Heat-proof plating. Doubles the speed where you start to burn.',d:l=>'burn above 20,000 speed (instead of 10,000)'},
-{id:'dist',n:'Long Haul',k:'',pass:true,ic:'🧭',base:50,how:'Bananas are worth more the farther you travel in one run. Upgrades raise the cap.',d:l=>'max x'+(2+.5*l).toFixed(1)+' at '+((500*(1+.5*l))|0)+' m'},
+{id:'dist',n:'Long Haul',k:'',pass:true,ic:'🧭',base:50,how:'Bananas are worth more the farther you travel in one run, and keep growing a little every 100 m with no limit. Upgrades raise the cap and the growth.',d:l=>'max x'+(2+.5*l).toFixed(1)+' at '+((500*(1+.5*l))|0)+' m'},
 ];
 function save(){localAt=Date.now();try{localStorage.setItem(SAVE_KEY,JSON.stringify({d:snapshot(),s:sig(),at:localAt}))}catch(e){}scheduleCloud()}
 function fixLocks(){PW.forEach(w=>{if(locked(w)&&up[w.id])up[w.id]=0})}
