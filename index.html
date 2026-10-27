@@ -1165,7 +1165,7 @@ function mmBody(){
   else if(mmScreen==='chal'){renderChal()}
   else if(mmScreen==='set'){renderSettings()}
   else{
-    $mms.innerHTML='<h2>🗺 Select level</h2><div class="sub">Each rebirth unlocks the next level. 🍌 '+kmb(bank)+'</div><div class="mg">'+MAPS.map(mapCard).join('')+'</div><button class="big go" data-mm="go">Start: '+M().ic+' '+M().n+'</button><div class="g2"><button class="big" data-mm="inv">'+spi('chest')+' Collection</button><button class="big" data-mm="shop">'+spi('stall')+' Shop</button><button class="big" data-mm="back">← Back</button></div>'}}
+    $mms.innerHTML='<h2>🗺 Select level</h2><div class="sub">Each rebirth unlocks the next level. 🍌 '+kmb(bank)+'</div><div class="mg">'+MAPS.map(mapCard).join('')+'</div><button class="big go" data-mm="go">Start: '+M().ic+' '+M().n+'</button><button class="big" data-mm="back">← Back</button>'}}
 function renderMM(){mmBody();updAcct();$mms.dataset.s=mmScreen;if(mmScreen!==lastScreen){lastScreen=mmScreen;$mms.classList.remove('pin');void $mms.offsetWidth;$mms.classList.add('pin')}}
 function mapCard(o){const has=own.maps[o.id],on=map===o.id,lk=locked(o);
   return '<div class="mc'+(on?' on':'')+(lk?' lk':'')+'" data-m="'+o.id+'" style="background:linear-gradient(180deg,'+o.s0+','+o.s1+')"><div class="mi">'+ico(o.id,44)+'</div><b>'+o.n+'</b><small>'+o.how+'</small><small>'+'★'.repeat(ms[o.id]||0)+'☆'.repeat(3-(ms[o.id]||0))+((ms[o.id]||0)<3?' next: '+MTH[ms[o.id]||0]+' m = +'+Math.round(150*o.bm*((ms[o.id]||0)+1)*(1+.5*rb))+' 🍌':' mastered')+'</small><span>'+(lk?'🔒 Rebirth '+o.rb:on?'● Selected':has?'Owned':'🍌 '+kmb(o.cost))+'</span></div>'}
