@@ -1695,15 +1695,22 @@ function isAdm(){try{return String((window.__gemail&&window.__gemail())||'').toL
 let ADM={uid:'',name:'',doc:null,note:'',busy:false};
 function admPath(u){return 'data/users/'+u+'/save'}
 function renderAdmin(){if(!isAdm()){mmScreen='set';renderMM();return}
-  let h='<h2>🛡 Admin</h2><div class="it" style="display:block"><small>Look a player up by their friend code, then change their booster counts. The change is written to their cloud save and their game loads it the next time it opens (or after their current run).</small></div>';
+  let h='<h2>🛡 Admin</h2><div class="it" style="display:block"><small>Look a player up by their friend code, then change their keys, bananas, rebirth, ascension, crates, EXP, unlocks and boosters. The change is written to their cloud save and their game loads it the next time it opens (or after their current run).</small></div>';
   h+='<div class="it" style="display:block"><b>Player code</b><br><input id="admcode" maxlength="12" placeholder="e.g. A1B2C3D4" style="width:70%;font:inherit;padding:8px;border-radius:10px;border:2px solid var(--acc);background:#0b1f14;color:var(--hud);text-transform:uppercase"> <button data-adm="find"'+(ADM.busy?' disabled':'')+'>Find</button></div>';
   if(ADM.doc){const d=ADM.doc.d||{},bo0=d.bo||{};
     h+='<div class="it" style="display:block"><b>'+esc(ADM.name||'Player')+'</b> <span class="pips">'+esc(ADM.uid.slice(0,6))+'…</span><br><small>Cloud save: '+(ADM.ok?'valid':'signature did not match (will be re-signed on save)')+' · rebirth '+(d.rb||0)+'</small></div>';
+    const fld=(id,lb,v,mx)=>'<div class="it"><div><b>'+lb+'</b><br><small>Now: '+Number(v||0).toLocaleString('en-US')+'</small></div><input type="number" min="0" max="'+mx+'" step="1" data-admf="'+id+'" value="'+Math.round(+v||0)+'" style="width:130px;font:inherit;font-size:18px;padding:8px;border-radius:10px;border:2px solid var(--acc);background:#0b1f14;color:var(--hud);text-align:center"></div>',xx=d.x||{};
+    h+='<h3 style="margin:10px 0 0">Progress</h3>'+fld('keys','🔑 Keys',d.keys,99999)+fld('bank','🍌 Bananas',d.bank,1e15)+fld('rb','♻ Rebirth (max '+RB_MAX+')',d.rb,RB_MAX)+fld('asc','⭐ Ascension (max '+ASC_MAX+')',d.asc,ASC_MAX)+fld('acr','🌌 Ascension crates',xx.acr,999)+fld('xp','✨ EXP',xx.xp,1e9);
+    h+='<h3 style="margin:10px 0 0">Unlocks (tick to grant on save)</h3>'+[['skins','All skins'],['pets','All pets'],['bgs','All backgrounds'],['maps','All maps'],['cannons','All cannons'],['dg','Reset daily gift timer']].map(a=>'<label class="it" style="cursor:pointer"><span>'+a[1]+'</span><input type="checkbox" data-admg="'+a[0]+'" style="width:22px;height:22px"></label>').join('');
+    h+='<h3 style="margin:10px 0 0">Boosters</h3>';
     h+=BO.map(b=>'<div class="it"><div><b>'+b.ic+' '+b.n+'</b><br><small>Now: '+(bo0[b.id]||0)+'</small></div><input type="number" min="0" max="999" step="1" data-admbo="'+b.id+'" value="'+(bo0[b.id]||0)+'" style="width:90px;font:inherit;font-size:18px;padding:8px;border-radius:10px;border:2px solid var(--acc);background:#0b1f14;color:var(--hud);text-align:center"></div>').join('');
     h+='<div class="g2"><button class="big" data-adm="zero">Set all to 0</button><button class="big" data-adm="save"'+(ADM.busy?' disabled':'')+'>Save changes</button></div>'}
+  h+='<h3 style="margin:12px 0 0">Your own account</h3><div class="it" style="display:block"><small>Instant changes to this device (they sync to your cloud save as usual).</small></div><div class="g2"><button data-adm="k10">+10 🔑</button><button data-adm="k100">+100 🔑</button><button data-adm="b1m">+1M 🍌</button><button data-adm="b1b">+1B 🍌</button><button data-adm="b1t">+1T 🍌</button><button data-adm="xp">+1000 ✨</button><button data-adm="acr">+1 🌌 crate</button><button data-adm="bo">+5 each booster</button><button data-adm="skins">Unlock all skins</button><button data-adm="maps">Unlock all maps</button></div>';
   if(ADM.note)h+='<div class="it" style="display:block"><small>'+esc(ADM.note)+'</small></div>';
   $mms.innerHTML=h+'<button class="big" data-mm="back">← Back</button>'}
-async function admAct(b){const a=b.dataset.adm;if(!isAdm()||!DB)return;
+function admSelf(a){const L={k10:()=>setKeys(keys+10),k100:()=>setKeys(keys+100),b1m:()=>setBank(bank+1e6),b1b:()=>setBank(bank+1e9),b1t:()=>setBank(bank+1e12),xp:()=>xpAdd(1000),acr:()=>{X.acr=(X.acr|0)+1},bo:()=>{BO.forEach(x=>{bo[x.id]=(bo[x.id]||0)+5})},skins:()=>{SK.forEach(k=>{own.skins[k.id]=1})},maps:()=>{MAPS.forEach(m=>{own.maps[m.id]=1})}};
+  if(!L[a])return false;L[a]();save();ADM.note='Done: '+a+'. Keys '+keys+', bananas '+kmb(bank)+'.';renderAdmin();return true}
+async function admAct(b){const a=b.dataset.adm;if(!isAdm())return;if(admSelf(a))return;if(!DB)return;
   if(a==='zero'){document.querySelectorAll('[data-admbo]').forEach(i=>i.value=0);return}
   if(a==='find'){const code=((document.getElementById('admcode')||{}).value||'').trim().toUpperCase();if(!code)return;
     ADM.busy=true;ADM.note='Looking up…';ADM.doc=null;renderAdmin();
@@ -1715,10 +1722,18 @@ async function admAct(b){const a=b.dataset.adm;if(!isAdm()||!DB)return;
     ADM.busy=false;renderAdmin();return}
   if(a==='save'){if(!ADM.doc||!ADM.uid)return;const nd=JSON.parse(JSON.stringify(ADM.doc.d)),nb={};
     BO.forEach(x=>{const i=document.querySelector('[data-admbo="'+x.id+'"]');nb[x.id]=Math.max(0,Math.min(999,Math.floor(+(i&&i.value)||0)))});
-    nd.bo=nb;const stamp=String(Date.now());ADM.busy=true;ADM.note='Saving…';renderAdmin();
+    nd.bo=nb;const fv=id=>{const i=document.querySelector('[data-admf="'+id+'"]');return i?Math.max(0,Math.floor(+i.value)||0):null},cl=(v,m)=>Math.min(m,v);
+    {const k=fv('keys'),bk=fv('bank'),r=fv('rb'),as=fv('asc'),ac=fv('acr'),xp=fv('xp');nd.x=Object.assign({},nd.x);
+     if(k!==null)nd.keys=cl(k,99999);if(bk!==null)nd.bank=cl(bk,1e15);if(r!==null)nd.rb=cl(r,RB_MAX);
+     if(as!==null){const na=cl(as,ASC_MAX);if(na!==(nd.asc|0))nd.x.acg=na;nd.asc=na}
+     if(ac!==null)nd.x.acr=cl(ac,999);if(xp!==null)nd.x.xp=cl(xp,1e9);
+     nd.own=Object.assign({maps:{},skins:{},cannons:{},pets:{},bgs:{}},nd.own);
+     document.querySelectorAll('[data-admg]:checked').forEach(c=>{const g=c.dataset.admg;
+       if(g==='skins')SK.forEach(q=>{nd.own.skins[q.id]=1});else if(g==='pets')PETS.forEach(q=>{nd.own.pets[q.id]=1});else if(g==='bgs')BGS.forEach(q=>{nd.own.bgs[q.id]=1});else if(g==='maps')MAPS.forEach(q=>{nd.own.maps[q.id]=1});else if(g==='cannons')CN_L.forEach(q=>{nd.own.cannons[q.id]=1});else if(g==='dg')delete nd.x.dg})}
+    const stamp=String(Date.now());ADM.busy=true;ADM.note='Saving…';renderAdmin();
     try{await DB.doc(admPath(ADM.uid)).update({d:nd,s:hash(canon(nd)),at:Date.now(),adm:stamp});
       const chk=await DB.doc(admPath(ADM.uid)).get(),cd=chk.data();ADM.doc=cd;ADM.ok=cd.s===hash(canon(cd.d));
-      ADM.note='Saved. '+BO.map(x=>x.n+' '+nb[x.id]).join(', ')+'. The player gets it on their next load.'}
+      ADM.note='Saved: keys '+nd.keys+', bananas '+kmb(nd.bank)+', rebirth '+nd.rb+', ascension '+nd.asc+'; '+BO.map(x=>x.n+' '+nb[x.id]).join(', ')+'. The player gets it on their next load.'}
     catch(e){ADM.note='Save failed ('+((e&&e.code)||'error')+'). Check that the new firestore.rules are published.'}
     ADM.busy=false;renderAdmin()}}
 let FR={ids:[],list:[],gifts:[],sent:{},mutual:{},inc:[],mnote:'',note:'',busy:false,loaded:false};
