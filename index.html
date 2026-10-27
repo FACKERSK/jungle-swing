@@ -914,7 +914,7 @@ CASES.push(
 {id:'mystery',n:'Mystery Crate',ic:'❓',cost:4,rb:2,pools:[undefined,'meme','snack','brain'],odds:{rare:33,epic:40,legendary:25,spectral:2}},
 {id:'cursed',n:'Cursed Crate',ic:'💀',cost:6,rb:4,pools:['meme','snack','brain'],odds:{epic:44,legendary:50,spectral:6}},
 {id:'pet',n:'Pet Crate',ic:'🐾',cost:4,rb:0,kind:'pet',odds:{common:42,rare:33,epic:17,legendary:7,spectral:1}});
-function ascOdds(){const a=Math.max(1,asc);return{rare:Math.max(6,62-2.4*a),epic:31+.1*a,legendary:6+1.5*a,spectral:.9+.4*a,trans:.15*a}}
+function ascOdds(){const a=Math.max(1,asc);return{rare:Math.max(6,62-2.4*a),epic:31+.1*a,legendary:6+1.5*a,spectral:.2,trans:.15*a}}
 CASES.push({id:'asc',n:'Ascension Crate',ic:'🌌',cost:0,rb:0,pools:['asc'],get odds(){return ascOdds()}});
 function acrSync(){const g=X.acg|0;if(asc>g){let a=0;for(let n=g+1;n<=asc;n++)a+=n%5===0?2:1;X.acr=(X.acr|0)+a;X.acg=asc;return a}return 0}
 function cpl(cs){return cs.pools||[undefined]}
@@ -2430,6 +2430,7 @@ CASES.push(
 {id:'emote',n:'Emote Crate',ic:'💃',cost:5,rb:1,kind:'emote',odds:{common:44,rare:30,epic:16,legendary:8,spectral:2}},
 {id:'bana',n:'Banana Skin Crate',ic:'🍌',cost:4,rb:1,kind:'bana',odds:{common:30,rare:36,epic:20,legendary:11,spectral:3}},
 {id:'hat',n:'Pet Hat Crate',ic:'🎩',cost:4,rb:0,kind:'hat',odds:{common:40,rare:32,epic:17,legendary:9,spectral:2}});
+CASES.forEach(c=>{if(c.odds&&c.odds.spectral!==undefined&&c.id!=='asc')c.odds.spectral=.2});
 const _er=(i,k)=>{const v=Math.sin(i*12.9898+k*78.233)*43758.5453;return v-Math.floor(v)};
 function fxStar(x,px,py,r){x.beginPath();x.moveTo(px,py-r);x.lineTo(px+r*.3,py-r*.3);x.lineTo(px+r,py);x.lineTo(px+r*.3,py+r*.3);x.lineTo(px,py+r);x.lineTo(px-r*.3,py+r*.3);x.lineTo(px-r,py);x.lineTo(px-r*.3,py-r*.3);x.closePath();x.fill()}
 function fxHeart(x,px,py,r){x.beginPath();x.moveTo(px,py+r*.9);x.bezierCurveTo(px-r*1.6,py-r*.2,px-r*.7,py-r*1.2,px,py-r*.4);x.bezierCurveTo(px+r*.7,py-r*1.2,px+r*1.6,py-r*.2,px,py+r*.9);x.fill()}
@@ -2709,7 +2710,7 @@ function openCase(id){const cs=CASES.find(c=>c.id===id);if(!cs||caseBusy)return;
   if(dup)setBank(bank+ref);else grantW(win);save();
   caseCur={win,cs,dup,ref};
   const N=44,W=96,WIN=36,items=[];for(let i=0;i<N;i++)items.push(i===WIN?win:pickSkin(cs));
-  const hi=Object.keys(cs.odds).filter(r=>RORD.indexOf(r)>RORD.indexOf(win.r)).sort((a,b)=>RORD.indexOf(a)-RORD.indexOf(b))[0],tease=!!hi&&rnd()<.5,td=rnd()<.5?1:-1;
+  const hi=(tp0=>tp0&&RORD.indexOf(tp0)>RORD.indexOf(win.r)&&skPool(cs,tp0).length?tp0:undefined)(RORD.slice().reverse().find(r=>cs.odds[r]>0)),tease=!!hi&&rnd()<.85,td=rnd()<.5?1:-1;
   if(tease){const pool=skPool(cs,hi);if(pool.length)items[WIN+td]=pool[Math.floor(rnd()*pool.length)]}
   {const top=RORD.slice().reverse().find(r=>cs.odds[r]>0),tp=top?skPool(cs,top):[];
    if(tp.length)for(let off=-8;off<=8;off++){const i=WIN+off;if(off===0||(tease&&off===td)||i<0||i>=N)continue;
