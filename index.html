@@ -1107,11 +1107,11 @@ function renderInv(keep){const had=!!$sh.querySelector('.panel')&&$sh.style.disp
   if(had){const pn=$sh.querySelector('.panel');if(pn)pn.classList.add('nop')}const nl=$sh.querySelector('.ivlist');if(nl)nl.scrollTop=ost;if(tab==='sk')pvStart();if(tab==='cn')drawCannonPreviews();if(tab==='bg')drawBgThumbs();chvStart()}
 function renderShop(keep){if(shopMode==='inv'){renderInv(keep);return}const o=$sh.querySelector('.panel'),had=!!o&&$sh.style.display!=='none',st=keep&&o?o.scrollTop:0;
   if(tab==='dbg'&&!debug)tab=shopMode==='play'?'up':'cs';
-  const tabs=shopMode==='rbm'?[['rb',spi('rebirth')+' Rebirth']]:shopMode==='play'?[['up','⬆ Upgrades'],['bo','🧪 Boosters'],['sp','🛒 Shop'],['rb','♻ Rebirth']]:runShop?[['cs','📦 Crates']]:[['cs','📦 Crates']].concat(debug?[['dbg','🐞 Debug']]:[]);if(!tabs.some(x=>x[0]===tab))tab=tabs[0][0];
-  let h='<div class="panel"><h2>'+(shopMode==='play'?'Upgrades':shopMode==='rbm'?spi('rebirth')+' Rebirth':spi('stall')+' Shop')+(debug?' 🐞':'')+'</h2>'+wal()+'<div class="tabs">'+tabs.map(x=>'<button data-tab="'+x[0]+'"'+(tab===x[0]?' class="on"':'')+'>'+x[1]+'</button>').join('')+'</div>';
-  h+=(shopMode==='play'&&tab==='bo'?'<div class="it" style="border:0"><small>Boosters you arm here are used on your next run.</small></div>':'')+(tab==='up'?PW.map(upRow).join(''):tab==='bo'?boNote()+BO.map(boRow).join(''):tab==='sp'?'<div class="it" style="border:0"><b>📦 Crates</b></div>'+CASES.map(caseRow).join(''):tab==='cs'?CASES.map(caseRow).join(''):tab==='dbg'?dbgRow():rbRow());
+  const tabs=shopMode==='rbm'?[['rb',spi('rebirth')+' Rebirth']]:shopMode==='play'?[['up','⬆ Upgrades']]:runShop?[['cs','📦 Crates']]:[['cs','📦 Crates']].concat(debug?[['dbg','🐞 Debug']]:[]);if(!tabs.some(x=>x[0]===tab))tab=tabs[0][0];
+  let h='<div class="panel"><h2>'+(shopMode==='play'?'Upgrades':shopMode==='rbm'?spi('rebirth')+' Rebirth':spi('stall')+' Shop')+(debug?' 🐞':'')+'</h2>'+wal()+(shopMode==='play'?'':'<div class="tabs">'+tabs.map(x=>'<button data-tab="'+x[0]+'"'+(tab===x[0]?' class="on"':'')+'>'+x[1]+'</button>').join('')+'</div>');
+  h+=(tab==='up'?PW.map(upRow).join('')+(shopMode==='play'?'<div class="it" style="border:0"><b>🧪 Boosters</b></div>'+boNote()+BO.map(boRow).join('')+'<div class="it" style="border:0"><b>📦 Crates</b></div>'+CASES.map(caseRow).join(''):''):tab==='cs'?CASES.map(caseRow).join(''):tab==='dbg'?dbgRow():rbRow());
   $sh.innerHTML=h+'<button id="shx">Close [B]</button></div>';const n=$sh.querySelector('.panel');if(n){n.scrollTop=st;if(had)n.classList.add('nop')}}
-setInterval(()=>{if(shopOpen&&tab==='bo'&&shopMode==='play'&&$sh.style.display!=='none'&&$cs.style.display!=='flex')renderShop(1)},20000);
+setInterval(()=>{if(shopOpen&&shopMode==='play'&&$sh.style.display!=='none'&&$cs.style.display!=='flex')renderShop(1)},20000);
 function openPlayShop(t){if(state!=='over')return;shopMode='play';tab=t||'up';shopOpen=true;$sh.innerHTML='';$sh.style.display='flex';$pz.style.display='none';renderShop()}
 function openOverShop(t){if(state!=='over'||shopOpen)return;shopMode='play';tab=t||'up';shopOpen=true;$sh.innerHTML='';$sh.style.display='flex';renderShop()}
 let runShop=false;
