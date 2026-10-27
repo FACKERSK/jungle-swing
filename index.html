@@ -218,6 +218,9 @@ button:not(:disabled):active,.chip:active,summary:active{transform:scale(.93)}
 #bar.burn{box-shadow:0 0 18px #ff3b2a}
 .card.burnc .lbl{color:#ff9d6b;animation:bpl .4s ease-in-out infinite alternate}
 @keyframes bpl{to{opacity:.4}}
+
+.ovb button.rbrdy{border-color:#5fd26a;box-shadow:0 0 12px rgba(95,210,106,.7);animation:rbp 1s ease-in-out infinite alternate}@keyframes rbp{to{box-shadow:0 0 24px rgba(95,210,106,1)}}
+@media (prefers-reduced-motion:reduce){.ovb button.rbrdy{animation:none}}
 #dangerfx{position:fixed;inset:0;pointer-events:none;z-index:26;opacity:0;background:radial-gradient(ellipse at center,rgba(255,0,0,0) 45%,rgba(255,20,20,.42) 100%)}
 #dangerfx.on{animation:dgf .55s ease-in-out infinite alternate}#dangerfx.mt{animation-duration:.3s}
 @keyframes dgf{from{opacity:.04}to{opacity:.55}}
@@ -1222,7 +1225,7 @@ $mm.addEventListener('click',e=>{const b=e.target.closest('button,[data-m]');if(
   else if(a==='keysreset')resetKeys();
   else if(a==='snd')toggleSound();else if(a==='sfx'){sfxOn=!sfxOn;try{localStorage.setItem(SFX_KEY,sfxOn?'1':'0')}catch(e){}renderSettings();sfx('click')}});
 $mbtn.addEventListener('click',()=>{if(state==='over')showMenu()});
-$o.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button[data-ov]');if(!b)return;e.stopPropagation();sfx('tab');openOverShop(b.dataset.ov==='shbo'?'bo':'up')});
+$o.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button[data-ov]');if(!b)return;e.stopPropagation();sfx('tab');if(b.dataset.ov==='rb'){if(state!=='over'||shopOpen)return;shopMode='rbm';tab='rb';shopOpen=true;$sh.innerHTML='';$sh.style.display='flex';renderShop();return}openOverShop('up')});
 
 // ---------- UI sounds and visual juice (all synthesized, separate from the music context) ----------
 const SFX_KEY='jungleSwing.v5.sfx';let sfxOn=true,SA=null,SG=null;const sfxLast={};
@@ -2471,7 +2474,7 @@ $csb.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||case
   else closeCase()});
 // ---------- shop clicks ----------
 $sh.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
-  if(b.id==='shx'){if(shopMode==='play'||runShop)closePlayShop();else toggleShop(false);return}
+  if(b.id==='shx'){if(shopMode==='play'||runShop||(shopMode==='rbm'&&state==='over'))closePlayShop();else toggleShop(false);return}
   if(b.dataset.tab==='cos'||b.dataset.tab==='ho'){const sc=b.dataset.tab==='cos'?'cos':'house';toggleShop(false);mmScreen=sc;renderMM();return}
   if(b.dataset.tab){tab=b.dataset.tab;renderShop();return}
   if(b.id==='rbgo'){doRebirth();return}
@@ -2664,7 +2667,7 @@ function step(dt){dgap=Math.max(0,dgap-dt);dchain=Math.max(0,dchain-dt);
         if(!debug&&map==='chaos'){X.cd=Math.max(X.cd||0,maxX/50|0);setTimeout(checkAch,900)}const xg=(debug||pz)?0:Math.floor(maxX/50*.5+bn*.12),l0=lvl();if(xg)xpAdd(xg);const l1=lvl();if(l1>l0){const pk=PERKS.filter(q=>!q.rbm&&q.lv>l0&&q.lv<=l1).map(q=>q.n);setTimeout(()=>toast('⭐ Level '+l1+'!'+(pk.length?' New perk: '+pk.join(', '):'')),600)}
         const ic=up.interest?Math.min(up.interest*25,Math.floor(bank*.02*up.interest)):0;if(ic)addBank(ic,true);
         act={};updBST();$b.textContent=best;
-        $m.innerHTML='<h1>'+(caught?'Caught!':'Splash!')+'</h1>Score <b style="color:var(--acc)">'+m+'</b> ('+(maxX/50|0)+' m + '+bn+' 🍌)<br>Bank: '+bank+' 🍌 saved'+(ic?' (interest +'+ic+')':'')+'<br>Best: '+best+(pz?'<br><small>Score only counts in glitch while Not Afraid of Water is on.</small>':'')+(xg?'<br><small>⭐ +'+xg+' XP · Level '+l1+'</small>':'')+'<br><small id="lbs"></small><div id="glb"></div><small id="cls"></small><span class="ovb"><button data-ov="shup">⬆ Upgrades</button><button data-ov="shbo">🧪 Boosters</button></span>'+TAP+' to retry';$o.style.display='flex';$sb.style.display='block';$mbtn.style.display='block';checkAch();save();maybeSubmit();fillGLB();cnote(cloud.st==='on'?'☁ Saving to your account...':'Saved on this device. Sign in to keep it in your account.');cloudNow()}}
+        $m.innerHTML='<h1>'+(caught?'Caught!':'Splash!')+'</h1>Score <b style="color:var(--acc)">'+m+'</b> ('+(maxX/50|0)+' m + '+bn+' 🍌)<br>Bank: '+bank+' 🍌 saved'+(ic?' (interest +'+ic+')':'')+'<br>Best: '+best+(pz?'<br><small>Score only counts in glitch while Not Afraid of Water is on.</small>':'')+(xg?'<br><small>⭐ +'+xg+' XP · Level '+l1+'</small>':'')+'<br><small id="lbs"></small><div id="glb"></div><small id="cls"></small><span class="ovb">'+(rb<RB_MAX&&lifeF>=rbReq()?'<button data-ov="rb" class="rbrdy">'+spi('rebirth')+' Rebirth ready!</button>':rb>=RB_MAX&&asc<ASC_MAX&&bank>=ascCost()?'<button data-ov="rb" class="rbrdy">'+spi('star')+' Ascension ready!</button>':'')+'<button data-ov="shup">⬆ Upgrades</button></span>'+TAP+' to retry';$o.style.display='flex';$sb.style.display='block';$mbtn.style.display='block';checkAch();save();maybeSubmit();fillGLB();cnote(cloud.st==='on'?'☁ Saving to your account...':'Saved on this device. Sign in to keep it in your account.');cloudNow()}}
   }
   maxX=Math.max(maxX,p.x);
   hazStep(dt);chaosTick(dt);rcTick(dt);stkHud();wormholeTick(dt);hpHud();loreTick(dt);spkTick(dt);
