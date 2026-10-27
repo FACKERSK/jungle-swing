@@ -219,8 +219,8 @@ button:not(:disabled):active,.chip:active,summary:active{transform:scale(.93)}
 .card.burnc .lbl{color:#ff9d6b;animation:bpl .4s ease-in-out infinite alternate}
 @keyframes bpl{to{opacity:.4}}
 
-.ovb button.rbrdy{border-color:#5fd26a;box-shadow:0 0 12px rgba(95,210,106,.7);animation:rbp 1s ease-in-out infinite alternate}@keyframes rbp{to{box-shadow:0 0 24px rgba(95,210,106,1)}}
-@media (prefers-reduced-motion:reduce){.ovb button.rbrdy{animation:none}}
+.ovb button.rbrdy,.big.rbrdy{border-color:#5fd26a;box-shadow:0 0 12px rgba(95,210,106,.7);animation:rbp 1s ease-in-out infinite alternate}@keyframes rbp{to{box-shadow:0 0 24px rgba(95,210,106,1)}}
+@media (prefers-reduced-motion:reduce){.ovb button.rbrdy,.big.rbrdy{animation:none}}
 #dangerfx{position:fixed;inset:0;pointer-events:none;z-index:26;opacity:0;background:radial-gradient(ellipse at center,rgba(255,0,0,0) 45%,rgba(255,20,20,.42) 100%)}
 #dangerfx.on{animation:dgf .55s ease-in-out infinite alternate}#dangerfx.mt{animation-duration:.3s}
 @keyframes dgf{from{opacity:.04}to{opacity:.55}}
@@ -678,6 +678,7 @@ const SPR=(function(){const O=SPRO,o={};
  o.key='<path d="M14 15l13 13M23 24l3-3M26 27l3-3" fill="none" stroke="#2a1708" stroke-width="5.4" stroke-linecap="round"/><path d="M14 15l13 13M23 24l3-3M26 27l3-3" fill="none" stroke="#ffd23f" stroke-width="2.8" stroke-linecap="round"/><circle cx="10" cy="11" r="6.5" fill="#ffd23f" '+O+'/><circle cx="10" cy="11" r="2.3" fill="#2a1708"/>';
  o.star='<path d="M16 3l3.8 8.2 9 1-6.7 6.1 1.9 8.9L16 22.7 8 27.2l1.9-8.9L3.2 12.2l9-1z" fill="#ffd23f" '+O+'/>';
  o.rebirth='<path d="M26 13A10.5 10.5 0 0 0 7.5 9.5" fill="none" stroke="#2a1708" stroke-width="5" stroke-linecap="round"/><path d="M26 13A10.5 10.5 0 0 0 7.5 9.5" fill="none" stroke="#5fd26a" stroke-width="2.6" stroke-linecap="round"/><path d="M6 19a10.5 10.5 0 0 0 18.5 3.5" fill="none" stroke="#2a1708" stroke-width="5" stroke-linecap="round"/><path d="M6 19a10.5 10.5 0 0 0 18.5 3.5" fill="none" stroke="#5fd26a" stroke-width="2.6" stroke-linecap="round"/><path d="M5 4v7h7" fill="none" '+O+'/><path d="M27 28v-7h-7" fill="none" '+O+'/>';
+ o.gift='<rect x="5" y="13" width="22" height="14" rx="2" fill="#e0453a" '+O+'/><rect x="3" y="9" width="26" height="6" rx="2" fill="#ff6a5e" '+O+'/><path d="M16 9v18" fill="none" stroke="#ffd23f" stroke-width="4"/><path d="M16 9c-6-6-10 0-5 1.5M16 9c6-6 10 0 5 1.5" fill="none" '+O+'/>';
  o.scroll='<rect x="7" y="5" width="18" height="22" rx="3" fill="#f2dcb2" '+O+'/><path d="M11 11h10M11 16h10M11 21h6" fill="none" '+O+'/>';
  o.sliders='<path d="M5 9h22M5 16h22M5 23h22" fill="none" '+O+'/><circle cx="11" cy="9" r="3" fill="#ffd23f" '+O+'/><circle cx="21" cy="16" r="3" fill="#5fd26a" '+O+'/><circle cx="13" cy="23" r="3" fill="#e0453a" '+O+'/>';
  o.cloud='<path d="M9 25a6 6 0 0 1-.5-12A8 8 0 0 1 24 12a6.5 6.5 0 0 1 0 13z" fill="#dff1ff" '+O+'/>';
@@ -1147,9 +1148,9 @@ function invTab(){const chip=(a,b)=>'<span class="invc"><span>'+a+'</span> <b>'+
 function mmBody(){
   if(mmScreen==='home'){
     $mms.innerHTML='<h1 class="logo">'+logoSvg()+'</h1><div class="sub" style="margin-top:2px;opacity:.55;font-size:12px">v'+VERSION+'</div>'+(mmNote?'<div class="sub">'+mmNote+'</div>':'')+''+
-      '<button class="big go" data-mm="play">'+spi('play')+' Play</button>'+
-      '<div class="g2"><button class="big" data-mm="inv">'+spi('chest')+' Collection</button><button class="big" data-mm="shop">'+spi('stall')+' Shop</button><button class="big" data-mm="prog">'+spi('peak')+' Career'+rbg(qCount()+(dgReady()?1:0))+'</button><button class="big" data-mm="friends">'+spi('pals')+' Friends</button></div><button class="big" data-mm="set">'+spi('gear')+' Settings</button>'}
-  else if(mmScreen==='prog'){$mms.innerHTML='<h2>'+spi('peak')+' Career</h2><div class="sub">Rankings, goals and growth.</div><button class="big" data-mm="lb">'+spi('podium')+' Leaderboard</button><button class="big" data-mm="ach">'+spi('medal')+' Achievements</button><button class="big" data-mm="chal">'+spi('key')+' Challenges'+rbg(qCount())+'</button><button class="big" data-mm="lvl">'+spi('star')+' Level and perks'+(dgReady()?rbg(1):'')+'</button><button class="big" data-mm="rbirth">'+spi('rebirth')+' Rebirth</button><button class="big" data-mm="lore">'+spi('scroll')+' Lore</button><button class="big" data-mm="back">← Back</button>'}
+      '<button class="big go" data-mm="play">'+spi('play')+' Play</button>'+(dgReady()?'<button class="big rbrdy" data-mm="dg">'+spi('gift')+' Daily gift ready! Claim</button>':'')+
+      '<div class="g2"><button class="big" data-mm="inv">'+spi('chest')+' Collection</button><button class="big" data-mm="shop">'+spi('stall')+' Shop</button><button class="big" data-mm="prog">'+spi('peak')+' Career'+rbg(qCount())+'</button><button class="big" data-mm="friends">'+spi('pals')+' Friends</button></div><button class="big" data-mm="set">'+spi('gear')+' Settings</button>'}
+  else if(mmScreen==='prog'){$mms.innerHTML='<h2>'+spi('peak')+' Career</h2><div class="sub">Rankings, goals and growth.</div><button class="big" data-mm="lb">'+spi('podium')+' Leaderboard</button><button class="big" data-mm="ach">'+spi('medal')+' Achievements</button><button class="big" data-mm="chal">'+spi('key')+' Challenges'+rbg(qCount())+'</button><button class="big" data-mm="lvl">'+spi('star')+' Level and perks'+'</button><button class="big" data-mm="rbirth">'+spi('rebirth')+' Rebirth</button><button class="big" data-mm="lore">'+spi('scroll')+' Lore</button><button class="big" data-mm="back">← Back</button>'}
   else if(mmScreen==='lvl'){$mms.innerHTML=lvlScreen()}
   else if(mmScreen==='house'){houseScreen()}
   else if(mmScreen==='lore'){loreScreen()}
