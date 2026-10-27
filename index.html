@@ -1113,8 +1113,8 @@ function renderInv(keep){const had=!!$sh.querySelector('.panel')&&$sh.style.disp
 function renderShop(keep){if(shopMode==='inv'){renderInv(keep);return}const o=$sh.querySelector('.panel'),had=!!o&&$sh.style.display!=='none',st=keep&&o?o.scrollTop:0;
   if(tab==='dbg'&&!debug)tab=shopMode==='play'?'up':'cs';
   const tabs=shopMode==='rbm'?[['rb',spi('rebirth')+' Rebirth']]:shopMode==='play'?[['up','⬆ Upgrades']]:[['cs','📦 Crates']].concat(debug?[['dbg','🐞 Debug']]:[]);if(!tabs.some(x=>x[0]===tab))tab=tabs[0][0];
-  let h='<div class="panel"><h2>'+(shopMode==='play'?'Upgrades':shopMode==='rbm'?spi('rebirth')+' Rebirth':spi('stall')+' Shop')+(debug?' 🐞':'')+'</h2>'+wal()+(shopMode==='play'?'':'<div class="tabs">'+tabs.map(x=>'<button data-tab="'+x[0]+'"'+(tab===x[0]?' class="on"':'')+'>'+x[1]+'</button>').join('')+'</div>');
-  h+=(tab==='up'?PW.map(upRow).join('')+(shopMode==='play'?'<div class="it" style="border:0"><b>🧪 Boosters</b></div>'+boNote()+BO.map(boRow).join('')+'<div class="it" style="border:0"><b>📦 Crates</b></div>'+CASES.map(caseRow).join(''):''):tab==='cs'?CASES.map(caseRow).join(''):tab==='dbg'?dbgRow():rbRow());
+  let h='<div class="panel"><h2>'+(shopMode==='play'?'Upgrades':shopMode==='rbm'?spi('rebirth')+' Level and rebirth':spi('stall')+' Shop')+(debug?' 🐞':'')+'</h2>'+wal()+(shopMode==='play'||shopMode==='rbm'?'':'<div class="tabs">'+tabs.map(x=>'<button data-tab="'+x[0]+'"'+(tab===x[0]?' class="on"':'')+'>'+x[1]+'</button>').join('')+'</div>');
+  h+=(tab==='up'?PW.map(upRow).join('')+(shopMode==='play'?'<div class="it" style="border:0"><b>🧪 Boosters</b></div>'+boNote()+BO.map(boRow).join('')+'<div class="it" style="border:0"><b>📦 Crates</b></div>'+CASES.map(caseRow).join(''):''):tab==='cs'?CASES.map(caseRow).join(''):tab==='dbg'?dbgRow():growthHtml());
   $sh.innerHTML=h+'<button id="shx">Close [B]</button></div>';const n=$sh.querySelector('.panel');if(n){n.scrollTop=st;if(had)n.classList.add('nop')}}
 setInterval(()=>{if(shopOpen&&shopMode==='play'&&$sh.style.display!=='none'&&$cs.style.display!=='flex')renderShop(1)},20000);
 function openPlayShop(t){if(state!=='over')return;shopMode='play';tab=t||'up';shopOpen=true;$sh.innerHTML='';$sh.style.display='flex';$pz.style.display='none';renderShop()}
@@ -1151,7 +1151,7 @@ function mmBody(){
     $mms.innerHTML='<h1 class="logo">'+logoSvg()+'</h1><div class="sub" style="margin-top:2px;opacity:.55;font-size:12px">v'+VERSION+'</div>'+(mmNote?'<div class="sub">'+mmNote+'</div>':'')+''+
       '<button class="big go" data-mm="play">'+spi('play')+' Play</button>'+(dgReady()?'<button class="big rbrdy" data-mm="dg">'+spi('gift')+' Daily gift ready! Claim</button>':'')+
       '<div class="g2"><button class="big" data-mm="inv">'+spi('chest')+' Collection</button><button class="big" data-mm="shop">'+spi('stall')+' Shop</button><button class="big" data-mm="prog">'+spi('peak')+' Career'+rbg(qCount())+'</button><button class="big" data-mm="friends">'+spi('pals')+' Friends</button></div><button class="big" data-mm="set">'+spi('gear')+' Settings</button>'}
-  else if(mmScreen==='prog'){$mms.innerHTML='<h2>'+spi('peak')+' Career</h2><div class="sub">Rankings, goals and growth.</div><button class="big" data-mm="lb">'+spi('podium')+' Leaderboard</button><button class="big" data-mm="ach">'+spi('medal')+' Achievements</button><button class="big" data-mm="chal">'+spi('key')+' Challenges'+rbg(qCount())+'</button><button class="big" data-mm="lvl">'+spi('star')+' Level and perks'+'</button><button class="big" data-mm="rbirth">'+spi('rebirth')+' Rebirth</button><button class="big" data-mm="lore">'+spi('scroll')+' Lore</button><button class="big" data-mm="back">← Back</button>'}
+  else if(mmScreen==='prog'){$mms.innerHTML='<h2>'+spi('peak')+' Career</h2><div class="sub">Rankings, goals and growth.</div><button class="big" data-mm="lb">'+spi('podium')+' Leaderboard</button><button class="big" data-mm="goals">'+spi('medal')+' Challenges and achievements'+rbg(qCount())+'</button><button class="big" data-mm="rbirth">'+spi('rebirth')+' Level and rebirth</button><button class="big" data-mm="lore">'+spi('scroll')+' Lore</button><button class="big" data-mm="back">← Back</button>'}
   else if(mmScreen==='lvl'){$mms.innerHTML=lvlScreen()}
   else if(mmScreen==='house'){houseScreen()}
   else if(mmScreen==='lore'){loreScreen()}
@@ -1165,6 +1165,7 @@ function mmBody(){
   else if(mmScreen==='notes'){renderNotes()}
   else if(mmScreen==='ach'){renderAch()}
   else if(mmScreen==='chal'){renderChal()}
+  else if(mmScreen==='goals'){renderGoals()}
   else if(mmScreen==='set'){renderSettings()}
   else{
     $mms.innerHTML='<h2>🗺 Select level</h2><div class="sub">Each rebirth unlocks the next level. 🍌 '+kmb(bank)+'</div><div class="mg">'+MAPS.map(mapCard).join('')+'</div><button class="big go" data-mm="go">Start: '+M().ic+' '+M().n+'</button><button class="big" data-mm="back">← Back</button>'}}
@@ -1196,13 +1197,14 @@ $mm.addEventListener('click',e=>{const b=e.target.closest('button,[data-m]');if(
   const a=b.dataset.mm;
   if(a==='friends'){mmScreen='friends';renderMM();frLoad();return}
   if(a==='lvl'){mmScreen='lvl';renderMM();return}
+  if(a==='goals'){mmScreen='goals';renderMM();return}
   if(a==='rbirth'){shopMode='rbm';tab='rb';toggleShop(true);return}
   if(a==='cos'){mmScreen='cos';renderMM();return}
   if(a==='house'||a==='lore'){mmScreen=a;renderMM();return}
   if(a==='dg'||a==='hb'||a==='twf'||a==='twh'){lvlAct(a);return}
   if(a==='play'){mmScreen='maps';mmNote='';renderMM()}
   else if(a==='admin'){if(isAdm()){mmScreen='admin';renderMM()}}
-  else if(a==='back'){if(mmScreen==='cos'||mmScreen==='house'){mmScreen='home';shopMode='inv';tab='sk';toggleShop(true);return}mmScreen=({admin:'set',friends:'home',lb:'prog',ach:'prog',chal:'prog',lvl:'prog',cos:'prog',house:'prog',lore:'prog',visit:'friends',trade:'friends',set:'home',notes:'set',cloud:'home',prog:'home',maps:'home'})[mmScreen]||'home';renderMM()}
+  else if(a==='back'){if(mmScreen==='cos'||mmScreen==='house'){mmScreen='home';shopMode='inv';tab='sk';toggleShop(true);return}mmScreen=({admin:'set',friends:'home',lb:'prog',ach:'prog',chal:'prog',goals:'prog',lvl:'prog',cos:'prog',house:'prog',lore:'prog',visit:'friends',trade:'friends',set:'home',notes:'set',cloud:'home',prog:'home',maps:'home'})[mmScreen]||'home';renderMM()}
   else if(a==='lb'){mmScreen='lb';renderMM()}
   else if(a==='savenick')saveNick();
   else if(a==='lbrstd'||a==='lbrsta')lbReset(a==='lbrsta');
@@ -1908,6 +1910,14 @@ function checkChal(){let any=qCheck();
   if(any){save();if(mmScreen==='chal'&&state==='menu')renderMM();if(shopOpen)renderShop(1)}}
 function qMil(){const f=n=>Number(n).toLocaleString('en-US'),P=qPend(),row=(ic,t,id)=>{const p=P.find(x=>x.id===id);return '<div class="ar'+(p?' rd':'')+'"><div class="pv lockbox">'+ic+'</div><div class="am"><b>'+t+'</b></div>'+(p?'<button class="qcl" data-qc="'+id+'">Claim<br>🔑 '+p.n+'</button>':'')+'</div>'};
   return '<h3 style="margin:12px 0 2px">🔑 Milestone keys</h3><div class="al">'+row('🧭','Every 10,000 m travelled ('+f(st.distTot||0)+' m)','ls:D')+row('🍌','Every 10,000 bananas collected ('+f(st.bananas||0)+')','ls:K')+'</div>'}
+let ddOpen={};
+document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.dataset&&d.dataset.dd)ddOpen[d.dataset.dd]=d.open},true);
+function dd(id,title,body,def){const o=id in ddOpen?ddOpen[id]:!!def;return '<details class="kbd" data-dd="'+id+'"'+(o?' open':'')+'><summary>'+title+'</summary>'+body+'</details>'}
+function stripScr(h){return h.replace(/^<h2>[\s\S]*?<\/h2>/,'').replace(/<button class="big" data-mm="back">← Back<\/button>$/,'')}
+function renderGoals(){renderChal();const c=stripScr($mms.innerHTML);renderAch();const a=stripScr($mms.innerHTML),dn=CH.filter(x=>chal[x.id]).length,ad=ACH.filter(x=>ach[x.id]).length;
+  $mms.innerHTML='<h2>'+spi('medal')+' Challenges and achievements</h2>'+dd('gc',spi('key')+' Challenges'+(qCount()?' ('+qCount()+' to claim)':''),c,true)+dd('ga',spi('medal')+' Achievements ('+ad+' unlocked)',a,false)+'<button class="big" data-mm="back">← Back</button>';pvStart()}
+function lvlBody(){return stripScr(lvlScreen())}
+function growthHtml(){return dd('gr',spi('rebirth')+' Rebirth',rbRow(),true)+dd('gl',spi('star')+' Level '+lvlInfo().l+' and perks',lvlBody(),false)}
 function renderChal(){const f=n=>Number(n).toLocaleString('en-US'),done=CH.filter(c=>chal[c.id]).length;
   $mms.innerHTML='<h2>'+spi('key')+' Challenges</h2><div class="sub">You have <b>'+keys+'</b> 🔑 keys. Crates in the shop open with keys. '+done+' / '+CH.length+' challenges done. Every 10,000 bananas collected and every 10,000 m travelled also give a key ('+f(st.bananas||0)+' bananas so far, next key at '+f((Math.floor((st.bananas||0)/10000)+1)*10000)+').'+(debug?' Debug mode: progress is not counted.':'')+'</div>'+(qCount()>1?'<button class="big go" data-qc="all">Claim all ('+qCount()+') 🔑</button>':'')+'<div class="it" style="display:block"><b>🏆 Champion booster</b><br><small>If you hold the #1 score on any map you own, claim a free booster every hour. One claim covers all maps.</small><button class="big" data-mm="hb">'+(hbLeft()>0?'Next in '+fmtT(hbLeft()):'🏆 Claim champion booster')+'</button>'+(hbMsg?'<small>'+hbMsg+'</small>':'')+'</div>'+qHtml()+qMil()+'<div class="al">'+CH.map(c=>{const v=Math.min(c.goal,Math.floor(c.g())),on=!!chal[c.id],cl=!!chal['k_'+c.id];
     return '<div class="ar'+(cl?' ok':on?' rd':'')+'"><div class="pv lockbox">'+(c.mid?ico(c.mid,40):c.rbi?rbIco(c.rbi,40):c.ic)+'</div><div class="am"><b>'+c.n+(cl?' ✔':'')+'</b><small>'+c.d+'</small><div class="mb"><div style="width:'+(v/c.goal*100)+'%"></div></div><small>'+f(v)+' / '+f(c.goal)+' · Reward: 🔑 '+c.k+'</small></div>'+(on?qBtn('pm:'+c.id,c.k,cl):'')+'</div>'}).join('')+'</div><button class="big" data-mm="back">← Back</button>'}
