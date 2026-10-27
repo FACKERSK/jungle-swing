@@ -1550,7 +1550,7 @@ async function initOnline(){
     const r=await Promise.all([c.use('db'),c.use('user')]),db=r[0],user=r[1];
     if(!db||!user)return;
     DBR=db;subBoard();subDay();
-    UID=await user.id();if(!UID)return;try{let n=typeof user.name==='function'?await user.name():(user.displayName||user.name);if(!n&&typeof user.displayName==='function')n=await user.displayName();if(!n&&window.__gname)n=window.__gname();acctName=cleanNick(String(n||'').trim().split(/\s+/)[0])}catch(e){}
+    UID=await user.id();if(!UID)return;autoDbg();try{let n=typeof user.name==='function'?await user.name():(user.displayName||user.name);if(!n&&typeof user.displayName==='function')n=await user.displayName();if(!n&&window.__gname)n=window.__gname();acctName=cleanNick(String(n||'').trim().split(/\s+/)[0])}catch(e){}
     canWrite=await user.can('data.write');DB=db;if(!nick){try{const q=await db.collection('names').where('uid','==',UID).get();const d=q.docs[0];if(d&&d.data().name){nick=cleanNick(d.data().name);try{localStorage.setItem(NICK_KEY,nick)}catch(e){}}}catch(e){}}cloud.st=canWrite===false?'ro':'on';cloudSync();
     maybeSubmit();frPub()
   }catch(e){}}
@@ -2522,6 +2522,7 @@ function setDebug(on){on=!!on;if(debug===on)return;debug=on;if(on){tainted=true;
   if(on){if(state==='cheat')$errx.onclick()}
   else{fixLocks();fixPick();setBank(bank);snap();if(tab==='dbg')tab='up'}
   save();if(shopOpen)renderShop(1);if(state==='menu')renderMM();console.info('[Jungle Swing] debug '+(on?'enabled':'disabled'))}
+function autoDbg(){try{const em=String((window.__gemail&&window.__gemail())||'').toLowerCase();if(em==='andri.louna@vkok.ee'&&!debug)setDebug(true)}catch(e){}}
 function runCmd(s){s=String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
   if(s==='-debug enable'){setDebug(true);return true}
   if(s==='-debug disable'){setDebug(false);return true}
