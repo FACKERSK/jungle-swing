@@ -514,7 +514,7 @@ try{document.body.classList.toggle('touch',IS_TOUCH)}catch(e){}
 const $mul=document.getElementById('mul');
 const TAP=IS_TOUCH?'Hold the screen':'Hold Space or tap';
 let S=1,VW=960,best=0,zSp=1;
-let keys=0,keyS=5,chal={},bank=0,bankS=13,up={rocket:0,gust:0,slam:0,hop:0,gold:0,surge:0,reach:0,glue:0,moon:0,shield:0,glide:0,boost:0,magnet:0,updash:0,launch:0,autoglide:0,automag:0,bval:0,net:0,grip:0,pump:0,feather:0,lucky:0,recharge:0,warp:0,blast:0,interest:0,combo:0,dist:0,therm:0,wormhole:0};
+let keys=0,keyS=5,chal={},bank=0,bankS=13,up={rocket:0,gust:0,slam:0,hop:0,gold:0,surge:0,reach:0,glue:0,moon:0,shield:0,glide:0,boost:0,magnet:0,updash:0,launch:0,autoglide:0,automag:0,bval:0,net:0,grip:0,pump:0,feather:0,lucky:0,recharge:0,warp:0,blast:0,interest:0,combo:0,dist:0,therm:0,wormhole:0,water:0};
 let ms={},bm={},rb=0,life=0,lifeF=0,bo={frenzy:0,mega:0,extra:0,supermag:0},arm={},act={},loadErr='',own={maps:{jungle:1},skins:{classic:1},cannons:{},pets:{},bgs:{}},map='jungle',skin='classic',debug=false;
 function freshSt(){return{distTot:0,bestBn:0,runs:0,bananas:0,bestDist:0,maxCombo:0,hits:0,pads:0,glideSec:0,slips:0,crates:0,posted:0,maps:{}}}
 let st=freshSt(),ach={},X={};function xpAdd(n){X.xp=(X.xp||0)+Math.max(0,Math.round(n))}
@@ -965,7 +965,8 @@ const PW=[
 {id:'recharge',n:'Quick Recharge',k:'',pass:true,ic:'🔋',base:25,how:'Dashes recharge faster.',d:l=>'-'+(l*.5)+'s dash cooldown'},
 {id:'interest',rb:1,n:'Banana Interest',k:'',pass:true,ic:'💰',base:50,how:'Earn interest on your bank after every run.',d:l=>(l*2)+'% of your bank, max '+(l*25)},
 {id:'combo',n:'Combo Master',k:'',pass:true,ic:'🔥',base:45,how:'Grab bananas in a row to build a combo multiplier. This lengthens the combo window and raises the cap.',d:l=>(2+.3*l).toFixed(1)+'s window, max x'+(1+(20+5*l)*.05).toFixed(2)},
-{id:'wormhole',rb:4,mx:1,n:'Wormhole',k:'',pass:true,ic:'🌀',base:1000000,how:'Fly 5 m above the big bananas and a wormhole swallows you and spits you back down with the same speed you went up with. Your forward speed is kept. No cooldown. Toggle it in Career > Level and perks.',d:l=>'bounces you down at 5 m above the big bananas'},
+{id:'wormhole',rb:4,mx:1,n:'Wormhole',k:'',pass:true,ic:'🌀',base:1000000,how:'Fly 5 m above the big bananas and a wormhole swallows you and spits you back down with the same speed you went up with. Your forward speed is kept. No cooldown. Switch it on or off with the button on this row.',d:l=>'bounces you down at 5 m above the big bananas'},
+{id:'water',rb:10,mx:1,n:'Not Afraid of Water',k:'',pass:true,ic:'🌊',base:12500000,how:'Water no longer hurts you or ends your run: you just bounce back out. You get a health bar and hazards cost 10 HP. Outside the Chaos map your score counts as 0 while it is on. Switch it on or off with the button on this row.',d:l=>'water bounces you, health bar on'},
 {id:'therm',rb:5,dbl:1,n:'Thermal Plating',k:'',pass:true,ic:'🧯',base:1040000,how:'Heat-proof plating. Every level doubles the speed where you start to burn. Each level costs 10 times the last.',d:l=>'burn above '+(10000*Math.pow(2,l)).toLocaleString('en-US')+' speed'},
 {id:'dist',n:'Long Haul',k:'',pass:true,ic:'🧭',base:50,how:'Bananas are worth more the farther you travel in one run, and keep growing with no limit: +0.01x per 100 m for every level (+0.05x at max). Upgrades raise the cap too.',d:l=>'max x'+(2+.5*l).toFixed(1)+' at '+((500*(1+.5*l))|0)+' m'},
 ];
@@ -975,7 +976,7 @@ function fixPick(){if(!debug){if(!own.maps[map]||locked(M()))map='jungle';if(!ow
 let eqPick=null;
 function upRow(w){const l=up[w.id],c=cost(w),mx=mxOf(w),cp=capOf(w),done=l>=mx,gate=!done&&l>=cp,lk=locked(w),more=w.mx!==1&&mx<(w.mx||5)+(w.id==='net'?2:5);
   const si=slots.indexOf(w.id),eqb=(l>0&&ACT5.indexOf(w.id)>=0)?'<button data-eq="'+w.id+'" class="'+(si>=0?'eqd':'eqb')+'">'+(si>=0?'Unequip<br><small>slot '+(si+1)+'</small>':'Equip')+'</button>':'',pk=eqPick===w.id&&si<0?'<div class="it" style="display:block"><b>Replace which slot?</b><div class="slg">'+[0,1,2].map(i=>{const c=PW.find(x=>x.id===slots[i]);return '<button data-sl="'+i+':'+w.id+'">Slot '+(i+1)+'<br><small>'+(c?c.ic+' '+c.n:'empty')+'</small></button>'}).join('')+'<button data-eq="">Cancel</button></div></div>':'';
-  return '<div class="it" data-row="'+w.id+'"><div><b>'+w.ic+' '+w.n+(w.k?' <kbd>'+kl(w)+'</kbd>':'')+'</b> <span class="pips">'+Array.from({length:mx},(_,q)=>'<i class="pp'+(q<l?' on':'')+(lastUp&&lastUp.id===w.id&&q===l-1&&lastUp.lv===l?' new':'')+'">'+(q<l?'●':'○')+'</i>').join('')+'</span><br><small>'+w.how+'</small><br><small>'+(lk?'🔒 Unlocks at rebirth '+w.rb+'. ':l?'Now: '+w.d(l)+'. ':'Not owned. ')+(done?(w.mx===1?'Owned':'MAX LEVEL'+(more?'. Rebirth to unlock tier '+(mx+1)+'.':'')):gate?'Tier '+(l+1)+' needs the '+(MAPS[Math.min(MAPS.length-1,hiMap()+1)].ic)+' '+MAPS[Math.min(MAPS.length-1,hiMap()+1)].n+' level.':'Next: '+w.d(l+1))+'</small></div>'+'<div style="display:flex;flex-direction:column;gap:6px">'+(done?(w.mx===1?'<button data-t="'+w.id+'">Auto: '+(up[w.id+'Off']?'OFF':'ON')+'</button>':''):'<button data-i="'+w.id+'"'+(bank<c||lk||gate||(w.req&&!up[w.req])?' disabled':'')+'>'+(lk?'🔒<br>Rebirth '+w.rb:(l?'Upgrade':'Buy')+'<br>🍌 '+kmb(c))+'</button>')+eqb+'</div></div>'+pk}
+  return '<div class="it" data-row="'+w.id+'"><div><b>'+w.ic+' '+w.n+(w.k?' <kbd>'+kl(w)+'</kbd>':'')+'</b> <span class="pips">'+Array.from({length:mx},(_,q)=>'<i class="pp'+(q<l?' on':'')+(lastUp&&lastUp.id===w.id&&q===l-1&&lastUp.lv===l?' new':'')+'">'+(q<l?'●':'○')+'</i>').join('')+'</span><br><small>'+w.how+'</small><br><small>'+(lk?'🔒 Unlocks at rebirth '+w.rb+'. ':l?'Now: '+w.d(l)+'. ':'Not owned. ')+(done?(w.mx===1?'Owned':'MAX LEVEL'+(more?'. Rebirth to unlock tier '+(mx+1)+'.':'')):gate?'Tier '+(l+1)+' needs the '+(MAPS[Math.min(MAPS.length-1,hiMap()+1)].ic)+' '+MAPS[Math.min(MAPS.length-1,hiMap()+1)].n+' level.':'Next: '+w.d(l+1))+'</small></div>'+'<div style="display:flex;flex-direction:column;gap:6px">'+(done?(w.mx===1?'<button data-t="'+w.id+'">'+(w.id==='water'||w.id==='wormhole'?'Active':'Auto')+': '+(up[w.id+'Off']?'OFF':'ON')+'</button>':''):'<button data-i="'+w.id+'"'+(bank<c||lk||gate||(w.req&&!up[w.req])?' disabled':'')+'>'+(lk?'🔒<br>Rebirth '+w.rb:(l?'Upgrade':'Buy')+'<br>🍌 '+kmb(c))+'</button>')+eqb+'</div></div>'+pk}
 const HZN={chaos:'All 11 enemy types',jungle:'Bats',desert:'Falling rocks',arctic:'Ice shards',moon:'Meteors',volcano:'Lava bombs',swamp:'Bat swarms',candy:'Gum blobs',neon:'Drones'};
 
 const BGS=[
@@ -2204,15 +2205,14 @@ const PERKS=[
  {lv:3,n:'Grippy Hands',d:'Grab range +10, so vines catch you more easily.'},
  {lv:5,n:'Treasure Sense',d:'Banana magnet range +25%.'},
  {lv:8,n:'Quick Hands',d:'Dash cooldown -10%.'},
- {lv:999,rbm:1,n:'Not Afraid of Water',d:'Unlocked at max rebirth (rebirth 10). Water no longer hurts you or ends your run: you just bounce back out. You get a health bar, and hazards cost 10 HP. You can toggle it off.',tg:'wf'},
  {lv:15,n:'Safety Net',d:'Start every run with one extra life.'},
  {lv:20,n:'Heat Resistant',d:'You start to burn at a 15% higher speed.'},
  {lv:25,n:'Banana Hoarder',d:'Bananas are worth 10% more.'},
  {lv:40,n:'Legend',d:'Bananas are worth 15% more.'}];
 function perkOn(l){return lvl()>=l}
 function lvMul(){return 1+.01*lvl()+(perkOn(25)?.1:0)+(perkOn(40)?.15:0)}
-function wfOn(){return rb>=RB_MAX&&X.wf!==0}
-function whOn(){return !!up.wormhole&&X.wh!==0}
+function wfOn(){return !!up.water&&!up.waterOff}
+function whOn(){return !!up.wormhole&&!up.wormholeOff}
 let hp=100,whCd=0;function hpMax(){return 100+lvl()*2}
 function hpHit(n){if(!wfOn()||state!=='play')return;hp=Math.max(0,hp-n);if(hp<=0){saves=0;p.fly=true;p.vy=Math.max(p.vy,200);p.y=WATER+6}}
 function waterHp(){buzz([30]);for(let i=0;i<24;i++)pts.push({x:p.x,y:WATER,vx:rnd()*300-150,vy:-rnd()*300,l:.6,c:'#9be3f5'});p.y=WATER-2;p.vy=-880;p.vx=Math.max(p.vx,300);return true}
@@ -2243,9 +2243,6 @@ function lvlScreen(){const li=lvlInfo(),pct=li.n?Math.round(li.r/li.n*100):100,n
   const tg=(id,on)=>'<button class="big" data-mm="'+id+'">'+(on?'✅ On':'⛔ Off')+'</button>';
   let h='<h2>'+spi('star')+' Level '+li.l+(li.l>=LV_MAX?' (MAX)':'')+'</h2><div class="sub">'+(li.n?(li.r.toLocaleString('en-US')+' / '+li.n.toLocaleString('en-US')+' XP'):'Max level')+(nx?' · next perk at level '+nx.lv+': '+nx.n:'')+'</div><div class="mb" style="margin:6px 0 10px"><div style="width:'+pct+'%"></div></div>'+
    '<div class="sub" style="margin:0 0 8px">You earn XP from distance and bananas in every run, from in-run challenges, the daily gift and ascension rewards.</div>';
-  h+='<div class="it" style="display:block"><b>🧩 Toggles</b>';
-  h+='<div style="margin-top:6px"><small>Not Afraid of Water '+(rb>=RB_MAX?'':'(unlocks at max rebirth)')+'</small>'+(rb>=RB_MAX?tg('twf',X.wf!==0):'')+'</div>';
-  h+='<div><small>Wormhole '+(up.wormhole?'':'(buy it in Upgrades, needs Rebirth 4)')+'</small>'+(up.wormhole?tg('twh',X.wh!==0):'')+'</div></div>';
   h+='<h3 style="margin:10px 0 4px">Perks</h3>'+PERKS.map(q=>'<div class="it" style="display:block;opacity:'+((q.rbm?rb>=RB_MAX:perkOn(q.lv))?1:.55)+'"><b>'+((q.rbm?rb>=RB_MAX:perkOn(q.lv))?'✅':'🔒')+' '+(q.rbm?'Max rebirth':'Lv '+q.lv)+' · '+q.n+'</b><br><small>'+q.d+'</small></div>').join('');
   return h+'<button class="big" data-mm="back">← Back</button>'}
 function lvlAct(a){if(a==='dg')dgClaim();else if(a==='hb'){hbClaim();return}else if(a==='twf'){X.wf=X.wf===0?1:0;save()}else if(a==='twh'){X.wh=X.wh===0?1:0;save()}renderMM()}
