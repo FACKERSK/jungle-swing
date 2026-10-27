@@ -1150,7 +1150,7 @@ function mmBody(){
   if(mmScreen==='home'){
     $mms.innerHTML='<h1 class="logo">'+logoSvg()+'</h1><div class="sub" style="margin-top:2px;opacity:.55;font-size:12px">v'+VERSION+'</div>'+(mmNote?'<div class="sub">'+mmNote+'</div>':'')+''+
       '<button class="big go" data-mm="play">'+spi('play')+' Play</button>'+
-      '<div class="g2"><button class="big" data-mm="inv">'+spi('chest')+' Collection</button><button class="big" data-mm="shop">'+spi('stall')+' Shop</button><button class="big" data-mm="prog">'+spi('peak')+' Career'+rbg(qCount()+(dgReady()?1:0))+'</button><button class="big" data-mm="friends">'+spi('pals')+' Friends</button></div><button class="big" data-mm="more">'+spi('gear')+' More</button>'}
+      '<div class="g2"><button class="big" data-mm="inv">'+spi('chest')+' Collection</button><button class="big" data-mm="shop">'+spi('stall')+' Shop</button><button class="big" data-mm="prog">'+spi('peak')+' Career'+rbg(qCount()+(dgReady()?1:0))+'</button><button class="big" data-mm="friends">'+spi('pals')+' Friends</button></div><button class="big" data-mm="set">'+spi('gear')+' Settings</button>'}
   else if(mmScreen==='prog'){$mms.innerHTML='<h2>'+spi('peak')+' Career</h2><div class="sub">Rankings, goals and growth.</div><button class="big" data-mm="lb">'+spi('podium')+' Leaderboard</button><button class="big" data-mm="ach">'+spi('medal')+' Achievements</button><button class="big" data-mm="chal">'+spi('key')+' Challenges'+rbg(qCount())+'</button><button class="big" data-mm="lvl">'+spi('star')+' Level and perks'+(dgReady()?rbg(1):'')+'</button><button class="big" data-mm="rbirth">'+spi('rebirth')+' Rebirth</button><button class="big" data-mm="lore">'+spi('scroll')+' Lore</button><button class="big" data-mm="back">← Back</button>'}
   else if(mmScreen==='lvl'){$mms.innerHTML=lvlScreen()}
   else if(mmScreen==='house'){houseScreen()}
@@ -1158,7 +1158,6 @@ function mmBody(){
   else if(mmScreen==='visit'){renderVisit()}
   else if(mmScreen==='cos'){cosScreen()}
   else if(mmScreen==='trade'){renderTrade()}
-  else if(mmScreen==='more'){$mms.innerHTML='<h2>'+spi('gear')+' More</h2><button class="big" data-mm="set">'+spi('sliders')+' Settings</button><button class="big" data-mm="notes">'+spi('scroll')+' Patch notes</button><button class="big" data-mm="cloud">'+spi('cloud')+' Account and cloud save</button>'+(isAdm()?'<button class="big" data-mm="admin">'+spi('shield')+' Admin</button>':'')+'<button class="big" data-mm="back">← Back</button>'}
   else if(mmScreen==='admin'){renderAdmin()}
   else if(mmScreen==='friends'){renderFriends()}
   else if(mmScreen==='lb'){renderLB()}
@@ -1203,14 +1202,13 @@ $mm.addEventListener('click',e=>{const b=e.target.closest('button,[data-m]');if(
   if(a==='dg'||a==='hb'||a==='twf'||a==='twh'){lvlAct(a);return}
   if(a==='play'){mmScreen='maps';mmNote='';renderMM()}
   else if(a==='admin'){if(isAdm()){mmScreen='admin';renderMM()}}
-  else if(a==='back'){if(mmScreen==='cos'||mmScreen==='house'){mmScreen='home';shopMode='inv';tab='sk';toggleShop(true);return}mmScreen=({admin:'more',friends:'home',lb:'prog',ach:'prog',chal:'prog',lvl:'prog',cos:'prog',house:'prog',lore:'prog',visit:'friends',trade:'friends',set:'more',notes:'more',cloud:'more',prog:'home',more:'home',maps:'home'})[mmScreen]||'home';renderMM()}
+  else if(a==='back'){if(mmScreen==='cos'||mmScreen==='house'){mmScreen='home';shopMode='inv';tab='sk';toggleShop(true);return}mmScreen=({admin:'set',friends:'home',lb:'prog',ach:'prog',chal:'prog',lvl:'prog',cos:'prog',house:'prog',lore:'prog',visit:'friends',trade:'friends',set:'home',notes:'set',cloud:'home',prog:'home',maps:'home'})[mmScreen]||'home';renderMM()}
   else if(a==='lb'){mmScreen='lb';renderMM()}
   else if(a==='savenick')saveNick();
   else if(a==='lbrstd'||a==='lbrsta')lbReset(a==='lbrsta');
   else if(a==='shop'){shopMode='garage';tab='cs';toggleShop(true)}
   else if(a==='inv'){shopMode='inv';if(['sk','cn','pt','bg'].indexOf(tab)<0)tab='sk';toggleShop(true)}
   else if(a==='prog'){mmScreen='prog';renderMM()}
-  else if(a==='more'){mmScreen='more';renderMM()}
   else if(a==='go')runTransition(start)
   else if(a==='cloud'){mmScreen='cloud';renderMM()}
   else if(a==='notes'){mmScreen='notes';renderMM()}
@@ -1652,7 +1650,7 @@ function renderSettings(){
    '<div class="sub">Open Keybinds and pick a key for each action from the drop-down. A key that is already used is swapped with the other action.</div>'+'<details class="kbd"'+(kbOpen?' open':'')+'><summary>⌨ Keybinds</summary>'+ACTS.map(a=>'<div class="it"><span>'+a[1]+'</span><select data-kb="'+a[0]+'">'+kbOpts(KEYS[a[0]])+'</select></div>').join('')+'</details>'+'<div class="it"><span>Reset keys</span><button data-mm="keysreset">Defaults</button></div>';
   const pfRow=(lbl,key,val)=>'<div class="it"><span>'+lbl+'</span><span class="stp"><button data-pf="'+key+'-">−</button><b>'+val+'</b><button data-pf="'+key+'+">+</button></span></div>';
   const disp='<h3 style="margin:10px 0 0">Display</h3>'+pfRow('Interface size','ui',Math.round(PF.ui*100)+'%')+pfRow('Game zoom','zoom',Math.round(PF.zoom*100)+'%')+'<div class="it"><span>Nerd mode (live stats)</span><button data-pf="nerd">'+(PF.nerd?'On':'Off')+'</button></div><div class="it"><span>Reset all data</span><button class="dng" data-mm="reset">Reset...</button></div><div class="it"><span>Vibration</span><button data-pf="vib">'+(PF.vib?'On':'Off')+'</button></div><div class="it"><span>Performance</span><button data-pf="perf">'+({auto:'Auto ('+['Low','Medium','High'][autoQ]+')',high:'High quality',low:'Battery saver'})[PF.perf]+'</button></div>';
-  $mms.innerHTML='<h2>⚙ Settings</h2><details class="kbd"'+(stOpen?' open':'')+' id="stdet"><summary>📈 Stats and progress</summary>'+invTab()+'</details>'+disp+'<div class="it"><span>Sound (music and wind)</span><button data-mm="snd">'+(mOn?'On':'Off')+'</button></div><div class="it"><span>UI sounds and effects</span><button data-mm="sfx">'+(sfxOn?'On':'Off')+'</button></div><h3 style="margin:10px 0 0">Controls</h3>'+rows+'<button class="big" data-mm="back">← Back</button>'}
+  $mms.innerHTML='<h2>'+spi('gear')+' Settings</h2><details class="kbd"'+(stOpen?' open':'')+' id="stdet"><summary>📈 Stats and progress</summary>'+invTab()+'</details>'+disp+'<div class="it"><span>Sound (music and wind)</span><button data-mm="snd">'+(mOn?'On':'Off')+'</button></div><div class="it"><span>UI sounds and effects</span><button data-mm="sfx">'+(sfxOn?'On':'Off')+'</button></div><h3 style="margin:10px 0 0">Controls</h3>'+rows+'<button class="big" data-mm="notes">'+spi('scroll')+' Patch notes</button>'+(isAdm()?'<button class="big" data-mm="admin">'+spi('shield')+' Admin</button>':'')+'<button class="big" data-mm="back">← Back</button>'}
 // ---------- cloud save (db + user capabilities) ----------
 let cloud={st:'offline',at:0,pending:null,msg:''},cloudT=0,cloudBusy=false;
 function cloudLabel(){return cloud.pending?'☁ Newer cloud save found':cloud.st==='on'?'☁ Cloud save on':cloud.st==='ro'?'☁ View-only account':'☁ Not signed in'}
@@ -1689,7 +1687,7 @@ const ADM_EMAIL='andri.louna.123@gmail.com';
 function isAdm(){try{return String((window.__gemail&&window.__gemail())||'').toLowerCase()===ADM_EMAIL}catch(e){return false}}
 let ADM={uid:'',name:'',doc:null,note:'',busy:false};
 function admPath(u){return 'data/users/'+u+'/save'}
-function renderAdmin(){if(!isAdm()){mmScreen='more';renderMM();return}
+function renderAdmin(){if(!isAdm()){mmScreen='set';renderMM();return}
   let h='<h2>🛡 Admin</h2><div class="it" style="display:block"><small>Look a player up by their friend code, then change their booster counts. The change is written to their cloud save and their game loads it the next time it opens (or after their current run).</small></div>';
   h+='<div class="it" style="display:block"><b>Player code</b><br><input id="admcode" maxlength="12" placeholder="e.g. A1B2C3D4" style="width:70%;font:inherit;padding:8px;border-radius:10px;border:2px solid var(--acc);background:#0b1f14;color:var(--hud);text-transform:uppercase"> <button data-adm="find"'+(ADM.busy?' disabled':'')+'>Find</button></div>';
   if(ADM.doc){const d=ADM.doc.d||{},bo0=d.bo||{};
