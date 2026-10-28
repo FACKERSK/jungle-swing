@@ -2873,7 +2873,7 @@ function openCase(id){const cs=CASES.find(c=>c.id===id);if(!cs||caseBusy)return;
    if(false&&tp.length)for(let off=-8;off<=8;off++){const i=WIN+off;if(off===0||(tease&&off===td)||i<0||i>=N)continue;
      if(rnd()<.6*(1-Math.abs(off)/10)*(.6+.4*rnd())){let it=tp[Math.floor(rnd()*tp.length)];if(it===items[i-1]&&tp.length>1)it=tp[(tp.indexOf(it)+1)%tp.length];items[i]=it}}}
   if(!$csv.querySelector('.csa'))$csv.insertAdjacentHTML('beforeend','<i class="csa t">▼</i><i class="csa b">▲</i>');
-  const owB=new Set(items.map(s=>s).filter(x=>x!==win&&ownedW(x)));$cst.innerHTML=items.map(s=>'<div class="ci r-'+s.r+'"><i>'+silh(s)+'</i><span>'+RAR[s.r].n+'</span>'+(owB.has(s)?'<b class="cow">OWNED</b>':'')+'</div>').join('');
+  const owB=new Set(items.filter(x=>x===win?dup:ownedW(x)));$cst.innerHTML=items.map(s=>'<div class="ci r-'+s.r+'"><i>'+silh(s)+'</i><span>'+RAR[s.r].n+'</span>'+(owB.has(s)?'<b class="cow">OWNED</b>':'')+'</div>').join('');
   const cw=document.getElementById('cw'),again=$cs.style.display==='flex',hs=cw.querySelectorAll('.cn .ch,.fl,.gl');hs.forEach(h=>h.style.transition='none');cw.className='cw';cw.style.display='block';{const ui=+PF.ui||1,cwid=Math.min((innerWidth-24)/ui,5*W);cw.style.setProperty('--hx',Math.round(cwid/2+30)+'px');cw.style.setProperty('--fw',Math.round(Math.min(innerWidth-8,cwid*ui+16))+'px');cw.style.setProperty('--rw',cwid+'px')}
   const cn=cw.querySelector('.cn');cn.querySelectorAll('.ch').forEach(e=>e.innerHTML='<canvas class="c3" width="320" height="320"></canvas>');CO.start(cw,cs.id);cn.style.animation='none';void cn.offsetWidth;hs.forEach(h=>h.style.transition='');cn.style.animation='';if(again)cw.classList.add('nd');
   $csv.classList.remove('out','tense','em');$csv.classList.add('hid');
