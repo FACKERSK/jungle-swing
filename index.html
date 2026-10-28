@@ -488,6 +488,7 @@ body.mn #perks,body.uiopen #perks{display:none}
 
 .skf{position:fixed;inset:0;z-index:47;pointer-events:none;background:radial-gradient(circle at 50% 30%,#fff,rgba(190,170,255,.8) 60%,rgba(120,90,220,.4));animation:skfl .6s ease-out forwards}
 @keyframes skfl{0%{opacity:0}6%{opacity:.85}14%{opacity:.1}24%{opacity:.7}100%{opacity:0}}
+#cw .ci{position:relative}.cow{position:absolute;top:3px;right:3px;font:700 8px 'Lilita One',sans-serif;letter-spacing:.5px;color:#0b0620;background:#ffd23f;border-radius:5px;padding:1px 4px}
 </style>
 <canvas id="c"></canvas><div id="abg"></div>
 <label id="hl" style="position:fixed;left:-99px;top:-99px;opacity:0;pointer-events:none"><input type="checkbox" switch id="hapt"></label>
@@ -2861,14 +2862,14 @@ function openCase(id){const cs=CASES.find(c=>c.id===id);if(!cs||caseBusy)return;
   const win=pickSkin(cs),dup=ownedW(win),ref=dup?RAR[win.r].d:0;lastWin=win.id;
   if(dup)setBank(bank+ref);else grantW(win);save();
   caseCur={win,cs,dup,ref};const plan=slotPlan(win),seenT=[plan.start,plan.start+plan.j[0],plan.start+plan.j[0]+plan.j[1],plan.start+plan.j[0]+plan.j[1]+plan.j[2]],seenPool=skPool(cs,win.r);
-  const N=44,W=96,WIN=36,items=[];for(let i=0;i<N;i++)items.push(i===WIN?win:seenPool.length?seenPool[Math.floor(rnd()*seenPool.length)]:pickSkin(cs));
+  const N=44,W=96,WIN=36,items=[];for(let i=0;i<N;i++){const ow=seenPool.filter(x=>x!==win&&ownedW(x));items.push(i===WIN?win:ow.length&&rnd()<.55?ow[Math.floor(rnd()*ow.length)]:seenPool.length?seenPool[Math.floor(rnd()*seenPool.length)]:pickSkin(cs))}
   const hi=undefined,hi0=(tp0=>tp0&&RORD.indexOf(tp0)>RORD.indexOf(win.r)&&skPool(cs,tp0).length?tp0:undefined)(RORD.slice().reverse().find(r=>cs.odds[r]>0)),tease=!!hi&&rnd()<.85,td=rnd()<.7?1:-1;
   if(tease){const pool=skPool(cs,hi);if(pool.length)items[WIN+td]=pool[Math.floor(rnd()*pool.length)]}
   {const top=RORD.slice().reverse().find(r=>cs.odds[r]>0),tp=top?skPool(cs,top):[];
    if(false&&tp.length)for(let off=-8;off<=8;off++){const i=WIN+off;if(off===0||(tease&&off===td)||i<0||i>=N)continue;
      if(rnd()<.6*(1-Math.abs(off)/10)*(.6+.4*rnd())){let it=tp[Math.floor(rnd()*tp.length)];if(it===items[i-1]&&tp.length>1)it=tp[(tp.indexOf(it)+1)%tp.length];items[i]=it}}}
   if(!$csv.querySelector('.csa'))$csv.insertAdjacentHTML('beforeend','<i class="csa t">▼</i><i class="csa b">▲</i>');
-  $cst.innerHTML=items.map(s=>'<div class="ci r-'+s.r+'"><i>'+silh(s)+'</i><span>'+RAR[s.r].n+'</span></div>').join('');
+  const owB=new Set(items.map(s=>s).filter(x=>x!==win&&ownedW(x)));$cst.innerHTML=items.map(s=>'<div class="ci r-'+s.r+'"><i>'+silh(s)+'</i><span>'+RAR[s.r].n+'</span>'+(owB.has(s)?'<b class="cow">OWNED</b>':'')+'</div>').join('');
   const cw=document.getElementById('cw'),again=$cs.style.display==='flex',hs=cw.querySelectorAll('.cn .ch,.fl,.gl');hs.forEach(h=>h.style.transition='none');cw.className='cw';cw.style.display='block';{const ui=+PF.ui||1,cwid=Math.min((innerWidth-24)/ui,5*W);cw.style.setProperty('--hx',Math.round(cwid/2+30)+'px');cw.style.setProperty('--fw',Math.round(Math.min(innerWidth-8,cwid*ui+16))+'px');cw.style.setProperty('--rw',cwid+'px')}
   const cn=cw.querySelector('.cn');cn.querySelectorAll('.ch').forEach(e=>e.innerHTML='<canvas class="c3" width="320" height="320"></canvas>');CO.start(cw,cs.id);cn.style.animation='none';void cn.offsetWidth;hs.forEach(h=>h.style.transition='');cn.style.animation='';if(again)cw.classList.add('nd');
   $csv.classList.remove('out','tense','em');$csv.classList.add('hid');
