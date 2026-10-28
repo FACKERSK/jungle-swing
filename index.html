@@ -2730,21 +2730,21 @@ let slEl=null;
 function skyFlash(){const e=document.createElement('div');e.className='skf';document.body.appendChild(e);setTimeout(()=>e.remove(),700)}
 function slotStop(){if(slEl){slEl.remove();slEl=null}}
 function slotRun(plan){slotStop();const el=document.createElement('div');el.id='slt';slEl=el;
-  const CH=64,N=24,D=[1400,2100,2800];let tier=plan.start;
+  const CH=64,N=24,D=[1250,1250,1250];let tier=plan.start;
   el.innerHTML='<div class="slf"></div><div class="sltp"><div class="slth">⚡ BANANA GODS BLESSING ⚡</div><div class="sltr" id="sltr"></div><div class="slm">'+[0,1,2].map(i=>'<div class="slr"><div class="slw"><div class="sls"></div></div><span class="slx">&nbsp;</span></div>').join('')+'</div></div>';
   document.body.appendChild(el);
   const rd=el.querySelector('#sltr'),fl=el.querySelector('.slf'),show=()=>{const r=RORD[tier];rd.textContent=RAR[r].n.toUpperCase();rd.style.color=RARC[r];rd.style.textShadow='0 0 18px '+RARC[r]+',0 0 40px '+RARC[r];rd.classList.remove('pop');void rd.offsetWidth;rd.classList.add('pop')};show();
   const chip=r=>'<div class="slc" style="height:'+CH+'px;color:'+RARC[r]+';background:linear-gradient(180deg,'+RARC[r]+'44,#0b0620 80%)"><span>'+RAR[r].n.toUpperCase()+'</span></div>';
   const rnR=()=>RORD[Math.floor(rnd()*RORD.length)],reels=[...el.querySelectorAll('.slr')];
   const before=[plan.start,plan.start+plan.j[0],plan.start+plan.j[0]+plan.j[1]];
-  later(()=>{reels.forEach((rl,i)=>{const cur=RORD[before[i]],fin=RORD[before[i]+plan.j[i]],st=rl.querySelector('.sls');let h=chip(rnR())+chip(cur);for(let k=2;k<N-2;k++)h+=chip(rnR());h+=chip(fin)+chip(rnR());st.innerHTML=h;rl.classList.add('spin');
+  reels.forEach((rl,i)=>{later(()=>{const cur=RORD[before[i]],fin=RORD[before[i]+plan.j[i]],st=rl.querySelector('.sls');let h=chip(rnR())+chip(cur);for(let k=2;k<N-2;k++)h+=chip(rnR());h+=chip(fin)+chip(rnR());st.innerHTML=h;rl.classList.add('spin');
       st.style.transition='none';st.style.transform='translateY(0)';void st.offsetWidth;st.style.transition='transform '+D[i]+'ms cubic-bezier(.15,.8,.2,1.04)';st.style.transform='translateY('+(-(N-3)*CH)+'px)';
       for(let k=0;k<Math.floor(D[i]/85);k++)later(()=>sfx('tick'),k*85);later(()=>{sfx('heart');buzz(15)},D[i]-420);later(()=>{sfx('heart');buzz(15)},D[i]-180);
       later(()=>{rl.classList.remove('spin');const slx=rl.querySelector('.slx');$cs.classList.remove('shk');void $cs.offsetWidth;$cs.classList.add('shk');
         if(plan.j[i]){tier=before[i]+plan.j[i];rl.classList.add('win');slx.textContent=plan.j[i]>1?'⬆⬆ MEGA!':'⬆ CHING!';sfx('reveal',Math.min(5,tier));sfx('rush',Math.min(5,tier));sfx('zing');for(let q=0;q<8+tier*3;q++)later(()=>sfx('coin'),q*55);buzz([60,30,110]);show();burstEl(rl,['🪙','🍌','✨','⭐','💎'],36);fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go')}
-        else{rl.classList.add('miss');slx.textContent='— —';sfx('thump');buzz(25)}},D[i]+80)})},150);
-  later(()=>{rd.classList.add('fin');sfx('rush',Math.min(5,tier));if(tier>=2)sfx('jack');burstEl(rd,['👑','🍌','💥','✨','🪙'],46);fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go')},3250);
-  later(()=>{el.classList.add('out')},3750);later(slotStop,4000)}
+        else{rl.classList.add('miss');slx.textContent='— —';sfx('thump');buzz(25)}},D[i]+80)},150+i*1450)});
+  later(()=>{rd.classList.add('fin');sfx('rush',Math.min(5,tier));if(tier>=2)sfx('jack');burstEl(rd,['👑','🍌','💥','✨','🪙'],46);fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go')},4600);
+  later(()=>{el.classList.add('out')},5100);later(slotStop,5350)}
 function clearCase(){caseTm.forEach(clearTimeout);caseTm=[];godStop();slotStop()}
 const RORD=['common','rare','epic','legendary','spectral','trans'];
 function finishCase(){if(!caseCur)return;caseDuck(.45);const c=caseCur;caseCur=null;clearCase();const cw=document.getElementById('cw');$csv.classList.remove('tense','em');$csv.classList.add('out');cw.style.display='block';cw.className='cw sp s4 r-'+c.win.r;revSkin=c.win;requestAnimationFrame(revLoop);if(c.win.r==='legendary'||c.win.r==='spectral'||c.win.r==='trans'){$cs.classList.remove('shk');void $cs.offsetWidth;$cs.classList.add('shk');buzz([60,40,120])}caseBusy=false;csResult(c.win,c.cs,c.dup,c.ref)}
@@ -2886,7 +2886,7 @@ function openCase(id){const cs=CASES.find(c=>c.id===id);if(!cs||caseBusy)return;
   later(()=>{cw.classList.add('s2');sfx('knock',0);buzz(25)},1000);later(()=>{sfx('knock',1);buzz(25)},1500);
   later(()=>{cw.classList.add('s3');sfx('crack');buzz([30,30,60])},1900);
   [0,1,2,3,4].forEach(k=>later(()=>{sfx('knock',2+k);buzz(20)},2050+k*170));
-  const E0=3350,LS=4700,E=E0+LS,TA=3700;later(()=>slotRun(plan),E0+700);later(()=>sfx('drum',16),E0+600);[E0+1600,E0+2600,E0+3500,E+450,E+1300,E+2200].forEach(tt=>later(()=>{skyFlash();sfx('crack')},tt));
+  const E0=3350,LS=6050,E=E0+LS,TA=3700;later(()=>slotRun(plan),E0+700);later(()=>sfx('drum',16),E0+600);[E0+1700,E0+3300,E0+4700,E+450,E+1300,E+2200].forEach(tt=>later(()=>{skyFlash();sfx('crack')},tt));
   later(()=>{cw.classList.remove('s2','s3');cw.classList.add('sp');const f=document.getElementById('cfl');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');sfx('crack');sfx('thump');buzz([60,30,120])},E0-420);
   /* 2) the roulette comes out of the split coconut and spins */
   later(()=>{$csv.classList.remove('hid');$csv.classList.add('em');$cs.classList.add('rl');sfx('tick');sfx('whoosh');sfx('riser',TA/1000);later(()=>sfx('drum',10),TA-700);
