@@ -480,6 +480,14 @@ body.mn #perks,body.uiopen #perks{display:none}
 
 .ci{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(8,3,28,.86) 85%)!important;color:var(--rc);font-weight:900;text-transform:uppercase;letter-spacing:.03em;border-right:1px solid rgba(255,255,255,.05)}
 .ci span{color:var(--rc);text-shadow:0 0 8px var(--rc)}
+
+#cw #csv{-webkit-mask-image:none!important;mask-image:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-radius:12px!important;border:3px solid #ffd23f!important;height:128px;
+ box-shadow:0 0 0 3px #7a4a00,0 0 0 6px #ffe27a,0 0 0 8px #7a4a00,0 0 44px 8px rgba(255,210,63,.55),inset 46px 0 40px -22px rgba(8,3,28,.95),inset -46px 0 40px -22px rgba(8,3,28,.95),inset 0 0 30px rgba(0,0,0,.6)!important}
+#cw #csv:after{width:100px!important;margin-left:-50px!important;background:linear-gradient(180deg,rgba(255,210,63,.22),rgba(255,210,63,.06) 50%,rgba(255,210,63,.22))!important;border-left:2px solid #ffe27a;border-right:2px solid #ffe27a;border-radius:6px;box-shadow:0 0 22px 2px rgba(255,210,63,.65),inset 0 0 18px rgba(255,210,63,.35)!important}
+.csa{font-size:20px}
+
+.skf{position:fixed;inset:0;z-index:47;pointer-events:none;background:radial-gradient(circle at 50% 30%,#fff,rgba(190,170,255,.8) 60%,rgba(120,90,220,.4));animation:skfl .6s ease-out forwards}
+@keyframes skfl{0%{opacity:0}6%{opacity:.85}14%{opacity:.1}24%{opacity:.7}100%{opacity:0}}
 </style>
 <canvas id="c"></canvas><div id="abg"></div>
 <label id="hl" style="position:fixed;left:-99px;top:-99px;opacity:0;pointer-events:none"><input type="checkbox" switch id="hapt"></label>
@@ -2681,7 +2689,7 @@ function godShow(tx){if(RMO||godC)return;const c=document.createElement('canvas'
     fire('s1',ms-1900,()=>{sfx('crack');buzz([40,20,60])});strike(1,1900,'L',3);
     fire('s2',ms-2350,()=>{sfx('crack');buzz([40,20,60])});strike(2,2350,'R',3.5);
     fire('s3',ms-(tx-180),()=>{sfx('crack');buzz([60,20,90])});strike(3,tx-180,'B',6);
-    if(ms>900&&ms<tx&&_er(Math.floor(ms/90),9)>.86){g.globalAlpha=.5;godBolt(g,_er(Math.floor(ms/90),3)*W,0,_er(Math.floor(ms/90),4)*W,H*.35,1.6,Math.floor(ms/90));g.globalAlpha=1}
+    {const k=Math.floor(ms/150);if(ms>700&&ms<tx+400&&_er(k,9)>.7){const x0=_er(k,3)*W;g.globalAlpha=.9;godBolt(g,x0,0,x0+(_er(k,4)-.5)*W*.5,H*(.45+.2*_er(k,5)),3,k);if(_er(k,6)>.5)godBolt(g,_er(k,7)*W,0,_er(k,8)*W,H*.4,2,k+50);g.globalAlpha=1;if(!godFired['f'+k]){godFired['f'+k]=1;godFlash=Math.max(godFlash,.5);if(k%2)sfx('crack')}}}
     fire('boom',ms-tx,()=>{godFlash=1;sfx('rush',5);sfx('thump');buzz([120,40,200,40,300]);$cs.classList.remove('shk');void $cs.offsetWidth;$cs.classList.add('shk');
       const n=Math.round(110*hv);for(let i=0;i<n;i++){const a=Math.random()*6.283,sp=250+Math.random()*900;godP.push({x:C.x,y:C.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-200,r:3+Math.random()*7,life:.9+Math.random()*1.3,t:0,k:i%3,rot:Math.random()*6})}
       burst(C.x,C.y,['🍌','💥','⚡','🍌','✨'],60)});
@@ -2706,6 +2714,7 @@ function slotPlan(win){const f=Math.max(0,RORD.indexOf(win.r)),j=[0,0,0];let sta
     pick.forEach(i=>j[i]=1);let left=d-m;while(left>0){j[pick[Math.floor(Math.random()*pick.length)]]++;left--}}
   return{start,j}}
 let slEl=null;
+function skyFlash(){const e=document.createElement('div');e.className='skf';document.body.appendChild(e);setTimeout(()=>e.remove(),700)}
 function slotStop(){if(slEl){slEl.remove();slEl=null}}
 function slotRun(plan){slotStop();const el=document.createElement('div');el.id='slt';slEl=el;
   const CH=64,N=24,D=[1400,2100,2800];let tier=plan.start;
@@ -2862,7 +2871,7 @@ function openCase(id){const cs=CASES.find(c=>c.id===id);if(!cs||caseBusy)return;
   later(()=>{cw.classList.add('s2');sfx('knock',0);buzz(25)},1000);later(()=>{sfx('knock',1);buzz(25)},1500);
   later(()=>{cw.classList.add('s3');sfx('crack');buzz([30,30,60])},1900);
   [0,1,2,3,4].forEach(k=>later(()=>{sfx('knock',2+k);buzz(20)},2050+k*170));
-  const E0=3350,LS=4000,E=E0+LS,TA=3700;later(()=>slotRun(plan),E0+100);
+  const E0=3350,LS=4000,E=E0+LS,TA=3700;later(()=>slotRun(plan),E0+100);[E0+900,E0+1900,E0+2800,E+450,E+1300,E+2200].forEach(tt=>later(()=>{skyFlash();sfx('crack')},tt));
   later(()=>{cw.classList.remove('s2','s3');cw.classList.add('sp');const f=document.getElementById('cfl');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');sfx('crack');sfx('thump');buzz([60,30,120])},E0-420);
   /* 2) the roulette comes out of the split coconut and spins */
   later(()=>{$csv.classList.remove('hid');$csv.classList.add('em');$cs.classList.add('rl');sfx('tick');
