@@ -2826,7 +2826,7 @@ function openCase(id){const cs=CASES.find(c=>c.id===id);if(!cs||caseBusy)return;
   caseBusy=true;lastCase=id;inc('crates');if(ak)X.acr=(X.acr|0)-1;else setKeys(keys-c);clearCase();caseSusp();
   const win=pickSkin(cs),dup=ownedW(win),ref=dup?RAR[win.r].d:0;lastWin=win.id;
   if(dup)setBank(bank+ref);else grantW(win);save();
-  caseCur={win,cs,dup,ref};const plan=slotPlan(win),seenT=[plan.start,plan.start+plan.j[0],plan.start+plan.j[0]+plan.j[1],plan.start+plan.j[0]+plan.j[1]+plan.j[2]],seenPool=[...new Set(seenT)].reduce((a,t)=>a.concat(skPool(cs,RORD[t])),[]);
+  caseCur={win,cs,dup,ref};const plan=slotPlan(win),seenT=[plan.start,plan.start+plan.j[0],plan.start+plan.j[0]+plan.j[1],plan.start+plan.j[0]+plan.j[1]+plan.j[2]],seenPool=skPool(cs,win.r);
   const N=44,W=96,WIN=36,items=[];for(let i=0;i<N;i++)items.push(i===WIN?win:seenPool.length?seenPool[Math.floor(rnd()*seenPool.length)]:pickSkin(cs));
   const hi=undefined,hi0=(tp0=>tp0&&RORD.indexOf(tp0)>RORD.indexOf(win.r)&&skPool(cs,tp0).length?tp0:undefined)(RORD.slice().reverse().find(r=>cs.odds[r]>0)),tease=!!hi&&rnd()<.85,td=rnd()<.7?1:-1;
   if(tease){const pool=skPool(cs,hi);if(pool.length)items[WIN+td]=pool[Math.floor(rnd()*pool.length)]}
