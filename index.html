@@ -2710,7 +2710,7 @@ function openCase(id){const cs=CASES.find(c=>c.id===id);if(!cs||caseBusy)return;
   if(dup)setBank(bank+ref);else grantW(win);save();
   caseCur={win,cs,dup,ref};
   const N=44,W=96,WIN=36,items=[];for(let i=0;i<N;i++)items.push(i===WIN?win:pickSkin(cs));
-  const hi=(tp0=>tp0&&RORD.indexOf(tp0)>RORD.indexOf(win.r)&&skPool(cs,tp0).length?tp0:undefined)(RORD.slice().reverse().find(r=>cs.odds[r]>0)),tease=!!hi&&rnd()<.85,td=rnd()<.5?1:-1;
+  const hi=(tp0=>tp0&&RORD.indexOf(tp0)>RORD.indexOf(win.r)&&skPool(cs,tp0).length?tp0:undefined)(RORD.slice().reverse().find(r=>cs.odds[r]>0)),tease=!!hi&&rnd()<.85,td=rnd()<.7?1:-1;
   if(tease){const pool=skPool(cs,hi);if(pool.length)items[WIN+td]=pool[Math.floor(rnd()*pool.length)]}
   {const top=RORD.slice().reverse().find(r=>cs.odds[r]>0),tp=top?skPool(cs,top):[];
    if(tp.length)for(let off=-8;off<=8;off++){const i=WIN+off;if(off===0||(tease&&off===td)||i<0||i>=N)continue;
@@ -2732,7 +2732,7 @@ function openCase(id){const cs=CASES.find(c=>c.id===id);if(!cs||caseBusy)return;
   later(()=>{$csv.classList.remove('hid');$csv.classList.add('em');$cs.classList.add('rl');sfx('tick');
     const vw=$csv.clientWidth;void $cst.offsetWidth;
     const offT=(WIN+(td>0?1:0))*W-td*.01*W-vw/2,offW=WIN*W+W/2-vw/2+(rnd()-.5)*W*.5;
-    {$cst.style.transition='transform '+TA+'ms cubic-bezier(.08,.8,.12,1)';$cst.style.transform='translateX('+(-(tease?offT:offW))+'px)';
+    {$cst.style.transition='transform '+TA+'ms cubic-bezier(.22,.61,.36,1)';$cst.style.transform='translateX('+(-(tease?offT:offW))+'px)';
       for(let k=1;k<=WIN+1;k++)later(()=>sfx('tick'),TA*(1-Math.pow(1-k/(WIN+1),1/3)))}
     const fin=()=>{const f=document.getElementById('cfl');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');finishCase()};
     if(tease){
