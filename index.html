@@ -2433,15 +2433,6 @@ CASES.push(
 {id:'bana',n:'Banana Skin Crate',ic:'🍌',cost:4,rb:1,kind:'bana',odds:{common:30,rare:36,epic:20,legendary:11,spectral:3}},
 {id:'hat',n:'Pet Hat Crate',ic:'🎩',cost:4,rb:0,kind:'hat',odds:{common:40,rare:32,epic:17,legendary:9,spectral:2}});
 CASES.forEach(c=>{if(c.odds&&c.odds.spectral!==undefined&&c.id!=='asc')c.odds.spectral=.2});
-// Lowest-chance rarity in every crate: x10 percentage chance (the displayed percentages come from these same values)
-CASES.forEach(c=>{if(c.id==='asc')return;
-  const e=Object.entries(c.odds);if(e.length<2)return;
-  const T=e.reduce((s,[,v])=>s+v,0);
-  const [lk,lw]=e.reduce((a,b)=>b[1]<a[1]?b:a);
-  const nw=Math.min(lw*10,T);
-  const k=(T-nw)/(T-lw);
-  for(const [r,v] of e)c.odds[r]=r===lk?nw:v*k;
-});
 const _er=(i,k)=>{const v=Math.sin(i*12.9898+k*78.233)*43758.5453;return v-Math.floor(v)};
 function fxStar(x,px,py,r){x.beginPath();x.moveTo(px,py-r);x.lineTo(px+r*.3,py-r*.3);x.lineTo(px+r,py);x.lineTo(px+r*.3,py+r*.3);x.lineTo(px,py+r);x.lineTo(px-r*.3,py+r*.3);x.lineTo(px-r,py);x.lineTo(px-r*.3,py-r*.3);x.closePath();x.fill()}
 function fxHeart(x,px,py,r){x.beginPath();x.moveTo(px,py+r*.9);x.bezierCurveTo(px-r*1.6,py-r*.2,px-r*.7,py-r*1.2,px,py-r*.4);x.bezierCurveTo(px+r*.7,py-r*1.2,px+r*1.6,py-r*.2,px,py+r*.9);x.fill()}
