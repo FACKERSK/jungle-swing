@@ -516,7 +516,9 @@ body.mn #perks,body.uiopen #perks{display:none}
 const cv=document.getElementById('c');let ctx=cv.getContext('2d');const mainCtx=ctx;
 const $d=document.getElementById('d'),$bn=document.getElementById('bn'),$bk=document.getElementById('bk'),$h=document.getElementById('h'),$mt=document.getElementById('mt'),$sp=document.getElementById('sp'),$pw=document.getElementById('pw'),$sb=document.getElementById('sb'),$sh=document.getElementById('sh'),$b=document.getElementById('b'),$f=document.getElementById('fill'),$o=document.getElementById('ov'),$m=document.getElementById('msg'),$rbn=document.getElementById('rbn'),$bst=document.getElementById('bst'),$err=document.getElementById('err'),$errm=document.getElementById('errm'),$errx=document.getElementById('errx');
 const $fade=document.getElementById('fade'),$bw=document.getElementById('burnwarn'),$dng=document.getElementById('dangerfx'),$bfx=document.getElementById('burnfx'),$dbg=document.getElementById('dbg'),$cs=document.getElementById('cs'),$csv=document.getElementById('csv'),$cst=document.getElementById('cst'),$csr=document.getElementById('csr'),$csb=document.getElementById('csb'),$mm=document.getElementById('mm'),$mms=document.getElementById('mms'),$mbtn=document.getElementById('mbtn');
-const VERSION='5.9';
+const VERSION='5.9';let COMMIT='';
+function cmtTxt(){return COMMIT?' · '+COMMIT:''}
+function cmtLoad(){if(COMMIT||!(debug||isAdm()))return;fetch('https://api.github.com/repos/FACKERSK/jungle-swing/commits/main',{headers:{Accept:'application/vnd.github+json'}}).then(r=>r.json()).then(j=>{if(j&&j.sha){COMMIT='commit '+j.sha.slice(0,7);document.querySelectorAll('.cmt').forEach(e=>e.textContent=cmtTxt())}}).catch(()=>{})}
 const VOL_KEY='jungleSwing.v5.vol';let VOL={m:1,s:1};try{const o=JSON.parse(localStorage.getItem(VOL_KEY)||'{}');if(o.m>=0&&o.m<=1)VOL.m=o.m;if(o.s>=0&&o.s<=1)VOL.s=o.s}catch(e){}
 (function(){const el=document.getElementById('boot');if(!el)return;
   if(navigator.webdriver&&!window.__boot){el.remove();return}
@@ -1191,8 +1193,8 @@ function invTab(){const chip=(a,b)=>'<span class="invc"><span>'+a+'</span> <b>'+
    sec('🎯 Current setup',chip('🗺 Map',M().n)+chip('🐵 Skin',SKN().n)+chip('💥 Cannon',(CN_L.find(c=>c.id===cnSel)||CN_L[0]).n))+
    sec('📈 Stats',chip('Runs',st.runs||0)+chip('Best score',best)+chip('Best distance',(st.bestDist||0)+' m')+chip('Total distance',(st.distTot||0)+' m')+chip('Bananas collected',st.bananas||0)+chip('Best combo','x'+(st.maxCombo||0)))}
 function mmBody(){
-  if(mmScreen==='home'){
-    $mms.innerHTML='<h1 class="logo">'+logoSvg()+'</h1><div class="sub" style="margin-top:2px;opacity:.55;font-size:12px">v'+VERSION+'</div>'+(mmNote?'<div class="sub">'+mmNote+'</div>':'')+''+
+  if(mmScreen==='home'){cmtLoad();
+    $mms.innerHTML='<h1 class="logo">'+logoSvg()+'</h1><div class="sub" style="margin-top:2px;opacity:.55;font-size:12px">v'+VERSION+((debug||isAdm())?'<span class="cmt">'+cmtTxt()+'</span>':'')+'</div>'+(mmNote?'<div class="sub">'+mmNote+'</div>':'')+''+
       '<button class="big go" data-mm="play">'+spi('play')+' Play</button>'+(dgReady()?'<button class="big rbrdy" data-mm="dg">'+spi('gift')+' Daily gift ready! Claim</button>':'')+
       '<div class="g2"><button class="big" data-mm="inv">'+spi('chest')+' Collection</button><button class="big" data-mm="shop">'+spi('stall')+' Shop</button><button class="big" data-mm="prog">'+spi('peak')+' Career'+rbg(qCount())+'</button><button class="big" data-mm="friends">'+spi('pals')+' Friends</button></div><button class="big" data-mm="set">'+spi('gear')+' Settings</button>'}
   else if(mmScreen==='prog'){$mms.innerHTML='<h2>'+spi('peak')+' Career</h2><div class="sub">Rankings, goals and growth.</div><button class="big" data-mm="lb">'+spi('podium')+' Leaderboard</button><button class="big" data-mm="goals">'+spi('medal')+' Challenges and achievements'+rbg(qCount())+'</button><button class="big" data-mm="rbirth">'+spi('rebirth')+' Level and rebirth</button><button class="big" data-mm="lore">'+spi('scroll')+' Lore</button><button class="big" data-mm="back">← Back</button>'}
@@ -3681,7 +3683,7 @@ function nerdUpd(n){if(!PF.nerd||state==='menu')return;nrdF++;nrdA+=rd0();if(n-n
    'Speed '+Math.round(curSp*MOMX)+'  vx '+Math.round(p.vx)+'  vy '+Math.round(p.vy),'Pos '+Math.round(p.x/50)+' m  height '+Math.max(0,Math.round((WATER-p.y)/50))+' m  best '+(maxX/50|0)+' m',
    'Bananas '+bn+'  combo '+combo+'  mult x'+f(sumMul()*fallOff(),2),'Vines '+vines.length+'  bananas '+nan.length+'  hazards '+haz.length+'  particles '+pts.length+'/'+PMAX,
    'Map '+map+'  rebirth '+rb+'  ascension '+asc,'Run time '+f(t,1)+' s  state '+state+(paused?' (paused)':''),'Boosts '+ab_,
-   'Audio '+(AC?AC.state:'off')+'  bpm '+Math.round(bpmNow)+'  step '+mStep,'v'+VERSION+(debug?'  DEBUG':'')].join('\n')}
+   'Audio '+(AC?AC.state:'off')+'  bpm '+Math.round(bpmNow)+'  step '+mStep,'v'+VERSION+cmtTxt()+(debug?'  DEBUG':'')].join('\n')}
 function rd0(){return lastDm}
 let paused=false,pzQuit=0;
 const $pz=document.getElementById('pause'),$pzb=document.getElementById('pzb');
