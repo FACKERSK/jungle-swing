@@ -2726,20 +2726,18 @@ function openCase(id){const cs=CASES.find(c=>c.id===id);if(!cs||caseBusy)return;
   later(()=>{cw.classList.add('s2');sfx('knock',0);buzz(25)},1000);later(()=>{sfx('knock',1);buzz(25)},1500);
   later(()=>{cw.classList.add('s3');sfx('crack');buzz([30,30,60])},1900);
   [0,1,2,3,4].forEach(k=>later(()=>{sfx('knock',2+k);buzz(20)},2050+k*170));
-  const E=3350,TA=tease?2500:3700;
+  const E=3350,TA=3700;
   later(()=>{cw.classList.remove('s2','s3');cw.classList.add('sp');const f=document.getElementById('cfl');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');sfx('crack');sfx('thump');buzz([60,30,120])},E-420);
   /* 2) the roulette comes out of the split coconut and spins */
   later(()=>{$csv.classList.remove('hid');$csv.classList.add('em');$cs.classList.add('rl');sfx('tick');
     const vw=$csv.clientWidth;void $cst.offsetWidth;
-    const offT=(rnd()<.5?(WIN+(td>0?1:0))*W:(WIN+td)*W+W/2)-vw/2,offW=WIN*W+W/2-vw/2+(rnd()-.5)*W*.5;
+    const offT=(WIN+(td>0?1:0))*W-td*.01*W-vw/2,offW=WIN*W+W/2-vw/2+(rnd()-.5)*W*.5;
     {$cst.style.transition='transform '+TA+'ms cubic-bezier(.08,.8,.12,1)';$cst.style.transform='translateX('+(-(tease?offT:offW))+'px)';
       for(let k=1;k<=WIN+1;k++)later(()=>sfx('tick'),TA*(1-Math.pow(1-k/(WIN+1),1/3)))}
     const fin=()=>{const f=document.getElementById('cfl');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');finishCase()};
     if(tease){
-      later(()=>{$csv.classList.remove('em');$csv.classList.add('tense');$csr.innerHTML='So close...';sfx('thump');buzz(30);caseSting()},TA);
-      later(()=>{sfx('thump');buzz(30)},TA+380);later(()=>{sfx('thump');buzz(30)},TA+760);
-      later(()=>{$csv.classList.remove('tense');$cst.style.transition='transform 750ms cubic-bezier(.45,0,.2,1)';$cst.style.transform='translateX('+(-offW)+'px)';$csr.innerHTML='';sfx('tick')},TA+1150);
-      later(fin,TA+2200)}
+      later(()=>{$csr.innerHTML='So close...';sfx('thump');buzz(30);caseSting()},TA+150);
+      later(fin,TA+1500)}
     else later(fin,TA+500)},E)}
 function rush(r,dup){let L={common:0,rare:1,epic:2,legendary:3,spectral:4,trans:5}[r]||0;if(dup)L=Math.max(0,L-1);if(!L)return;
   const E=['✨','💎','⭐','🌟','🎉','👑','💥','🍌','🪙'];sfx('rush',L);buzz(L>=3?[80,40,80,40,160,60,260]:L>=2?[60,40,120]:40);
